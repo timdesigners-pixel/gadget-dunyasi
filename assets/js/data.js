@@ -81,5 +81,29 @@ GD.SETS = [
     thumbs:[ {icon:'speaker',grad:'linear-gradient(150deg,#3a2b52,#160f24)'}, {icon:'headphones',grad:'linear-gradient(150deg,#2a2a3a,#12121c)'}, {icon:'mic',grad:'linear-gradient(150deg,#22345c,#0e1526)'} ] }
 ];
 
+GD.escapeHtml = function(str){
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 GD.getProduct = id => GD.PRODUCTS.find(p => String(p.id) === String(id));
 GD.getCategoryLabel = key => (GD.CATEGORIES.find(c => c.key === key) || {}).label || key;
+
+/*
+ * Ürün detay sayfasındaki galeri için 4 açı varyasyonu üretir. Gerçek
+ * fotoğraflarımız olmadığından, aynı ikonu farklı gradyan açı/renk
+ * sıralamalarıyla tekrar kullanarak bir "çoklu görsel" hissi veriyoruz.
+ */
+GD.getGallery = function(product){
+  const { angle, c1, c2 } = GD.parseGradient(product.grad);
+  return [
+    { icon: product.icon, grad: `linear-gradient(${angle}deg,${c1},${c2})` },
+    { icon: product.icon, grad: `linear-gradient(${(angle + 90) % 360}deg,${c2},${c1})` },
+    { icon: product.icon, grad: `linear-gradient(${(angle + 180) % 360}deg,${c1},${c2})` },
+    { icon: product.icon, grad: `linear-gradient(${(angle + 270) % 360}deg,${c2},${c1})` }
+  ];
+};

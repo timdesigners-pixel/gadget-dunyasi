@@ -88,9 +88,7 @@ window.GD = window.GD || {};
     }
     cartItemsEl.innerHTML = cart.map(i => `
       <div class="cart-row">
-        <div class="thumb" style="background:${i.grad};">
-          <i data-lucide="${i.icon}" style="width:20px;height:20px;color:rgba(255,255,255,.6);"></i>
-        </div>
+        <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:120})}</div>
         <div class="info">
           <div class="name">${i.name}</div>
           <div class="meta">${i.qty} adet · ${GD.fmt(i.price)}</div>

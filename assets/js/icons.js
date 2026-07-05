@@ -75,3 +75,44 @@ GD.createIconsIn = function(root){
 
 // Kodun geri kalanı lucide.createIcons() çağırıyor - küçük bir uyumluluk katmanı
 window.lucide = { createIcons: () => GD.createIconsIn(document) };
+
+/*
+ * Gerçek fotoğraf yerine kullanılan gradyan+ikon "placeholder" görselleri
+ * gerçek <img> etiketlerine (SVG data URI) dönüştürür, böylece loading="lazy"
+ * tarayıcıda gerçek bir etkiye sahip olur ve tek bir img'den kolayca bir
+ * lightbox/galeri üretilebilir.
+ */
+GD.parseGradient = function(gradStr){
+  const m = /linear-gradient\(([\d.]+)deg,\s*(#[0-9a-fA-F]{3,8})\s*,\s*(#[0-9a-fA-F]{3,8})\)/.exec(gradStr || '');
+  if(!m) return { angle: 150, c1: '#22345c', c2: '#0e1526' };
+  return { angle: parseFloat(m[1]), c1: m[2], c2: m[3] };
+};
+
+let _gdSvgUid = 0;
+GD.mediaSvgDataUri = function(icon, gradStr, opts){
+  opts = opts || {};
+  const size = opts.size || 200;
+  const iconRatio = opts.iconRatio != null ? opts.iconRatio : 0.42;
+  const { angle, c1, c2 } = GD.parseGradient(gradStr);
+  const gid = 'g' + (_gdSvgUid++);
+  const iconSize = size * iconRatio;
+  const off = (size - iconSize) / 2;
+  const iconPath = icon ? (GD.ICONS[icon] || '') : '';
+  const iconSvg = iconPath
+    ? `<svg x="${off}" y="${off}" width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>`
+    : '';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">` +
+    `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1" gradientTransform="rotate(${angle} 0.5 0.5)">` +
+    `<stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>` +
+    `<rect width="${size}" height="${size}" fill="url(#${gid})"/>${iconSvg}</svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+};
+
+GD.mediaImgTag = function(icon, gradStr, alt, opts){
+  opts = opts || {};
+  const loading = opts.loading || 'lazy';
+  const cls = opts.class ? ` class="${opts.class}"` : '';
+  const style = opts.style ? ` style="${opts.style}"` : '';
+  const uri = GD.mediaSvgDataUri(icon, gradStr, opts);
+  return `<img src="${uri}" alt="${GD.escapeHtml(alt)}" loading="${loading}" decoding="async"${cls}${style}>`;
+};

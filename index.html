@@ -357,15 +357,14 @@
     const item = document.createElement('div');
     item.className = 'social-item';
     item.innerHTML = `
-      <div class="social-thumb" style="background:${post.grad};display:flex;align-items:center;justify-content:center;">
-        <i data-lucide="${post.icon}" style="width:34px;height:34px;color:rgba(255,255,255,.55);"></i>
+      <div class="social-thumb">
+        ${GD.mediaImgTag(post.icon, post.grad, post.caption, {size:300, iconRatio:.32})}
         <div class="ig"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></div>
       </div>
       <div class="social-tag">❤ ${post.likes} · #GadgetDünyası</div>`;
     item.title = post.caption;
     socialGrid.appendChild(item);
   });
-  GD.createIconsIn(socialGrid);
 
   /* ---------- Öne Çıkan Setler ---------- */
   const setCarousel = document.getElementById('setCarousel');
@@ -382,24 +381,13 @@
         </button>
       </div>
       <div class="set-hero-thumbs">
-        ${s.thumbs.map(t=>`<div class="th" style="background:${t.grad};"><span data-lucide="${t.icon}"></span></div>`).join('')}
+        ${s.thumbs.map(t=>`<div class="th">${GD.mediaImgTag(t.icon, t.grad, s.name, {size:200, iconRatio:.5})}</div>`).join('')}
       </div>
       <div class="set-price">
         <span class="now">${GD.fmt(s.price)}</span>
         <span class="old">${GD.fmt(s.oldPrice)}</span>
       </div>
     </div>`).join('');
-
-  // render set thumb icons
-  setCarousel.querySelectorAll('.th [data-lucide]').forEach(el=>{
-    const path = GD.ICONS[el.getAttribute('data-lucide')] || '';
-    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
-    svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','1.8');
-    svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
-    svg.innerHTML = path;
-    el.replaceWith(svg);
-  });
 
   setCarousel.querySelectorAll('.set-add').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -452,11 +440,11 @@
       const stars = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5-Math.round(p.rating));
       return `
       <div class="product-card">
-        <div class="product-media" style="background:${p.grad};">
-          <a href="product.html?id=${p.id}" aria-label="${p.name}"></a>
+        <div class="product-media">
+          <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
           <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
           <div class="product-fav"><span data-lucide="heart"></span></div>
-          <span data-lucide="${p.icon}" style="width:56px;height:56px;color:rgba(255,255,255,.55);pointer-events:none;"></span>
+          ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
         </div>
         <div class="product-body">
           <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>

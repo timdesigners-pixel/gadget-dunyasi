@@ -92,6 +92,22 @@
 <div class="wrap" id="detailWrap">
   <div class="detail-grid" id="detailGrid"></div>
 
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" aria-label="Kapat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <img id="lightboxImg" src="" alt="">
+      <button class="lightbox-nav prev" id="lightboxPrev" aria-label="Önceki">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <button class="lightbox-nav next" id="lightboxNext" aria-label="Sonraki">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+      <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+  </div>
+
   <div class="tabs-nav" id="tabsNav">
     <button class="tab-btn active" data-tab="desc">Açıklama</button>
     <button class="tab-btn" data-tab="specs">Teknik Özellikler</button>
@@ -178,8 +194,21 @@
     const savePct = product.oldPrice ? Math.round((1 - product.price/product.oldPrice)*100) : 0;
 
     document.getElementById('detailGrid').innerHTML = `
-      <div class="detail-media" style="background:${product.grad};">
-        <span data-lucide="${product.icon}"></span>
+      <div class="gallery">
+        <div class="gallery-main" id="galleryMain">
+          <img id="galleryMainImg" src="" alt="${GD.escapeHtml(product.name)}">
+          <button class="gallery-arrow prev" id="galleryPrev" aria-label="Önceki">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+          </button>
+          <button class="gallery-arrow next" id="galleryNext" aria-label="Sonraki">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          <div class="gallery-zoom-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Büyütmek için tıkla
+          </div>
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
       </div>
       <div class="detail-info">
         <div class="detail-cat">${GD.getCategoryLabel(product.cat)}</div>
@@ -211,6 +240,65 @@
       </div>`;
     GD.createIconsIn(document.getElementById('detailGrid'));
 
+    // Ürün galerisi (küçük resim şeridi + ana görsel + oklar)
+    const galleryImages = GD.getGallery(product);
+    let galleryIndex = 0;
+    const galleryMainImg = document.getElementById('galleryMainImg');
+    const galleryThumbs = document.getElementById('galleryThumbs');
+
+    galleryThumbs.innerHTML = galleryImages.map((slide,i)=>`
+      <button class="gallery-thumb${i===0?' active':''}" data-i="${i}" aria-label="Görsel ${i+1}">
+        <img src="${GD.mediaSvgDataUri(slide.icon, slide.grad, {size:150, iconRatio:0.42})}" alt="${product.name} - görsel ${i+1}" loading="lazy" decoding="async">
+      </button>`).join('');
+
+    function showGallerySlide(i){
+      galleryIndex = (i + galleryImages.length) % galleryImages.length;
+      const slide = galleryImages[galleryIndex];
+      galleryMainImg.src = GD.mediaSvgDataUri(slide.icon, slide.grad, { size:600, iconRatio:0.4 });
+      galleryThumbs.querySelectorAll('.gallery-thumb').forEach((t,ti)=>t.classList.toggle('active', ti===galleryIndex));
+    }
+    showGallerySlide(0);
+
+    document.getElementById('galleryPrev').addEventListener('click', ()=> showGallerySlide(galleryIndex-1));
+    document.getElementById('galleryNext').addEventListener('click', ()=> showGallerySlide(galleryIndex+1));
+    galleryThumbs.querySelectorAll('.gallery-thumb').forEach(btn=>{
+      btn.addEventListener('click', ()=> showGallerySlide(Number(btn.dataset.i)));
+    });
+
+    // Büyük görsel lightbox'ı
+    const lightboxOverlay = document.getElementById('lightboxOverlay');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCounter = document.getElementById('lightboxCounter');
+
+    function openLightbox(){
+      updateLightbox();
+      lightboxOverlay.classList.add('open');
+    }
+    function closeLightbox(){
+      lightboxOverlay.classList.remove('open');
+    }
+    function updateLightbox(){
+      const slide = galleryImages[galleryIndex];
+      lightboxImg.src = GD.mediaSvgDataUri(slide.icon, slide.grad, { size:900, iconRatio:0.38 });
+      lightboxCounter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
+      galleryThumbs.querySelectorAll('.gallery-thumb').forEach((t,ti)=>t.classList.toggle('active', ti===galleryIndex));
+    }
+
+    document.getElementById('galleryMain').addEventListener('click', (e)=>{
+      if(e.target.closest('.gallery-arrow')) return;
+      openLightbox();
+    });
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    document.getElementById('lightboxPrev').addEventListener('click', ()=>{ showGallerySlide(galleryIndex-1); updateLightbox(); });
+    document.getElementById('lightboxNext').addEventListener('click', ()=>{ showGallerySlide(galleryIndex+1); updateLightbox(); });
+    lightboxOverlay.addEventListener('click', (e)=>{ if(e.target === lightboxOverlay) closeLightbox(); });
+    document.addEventListener('keydown', (e)=>{
+      if(!lightboxOverlay.classList.contains('open')) return;
+      if(e.key === 'Escape') closeLightbox();
+      if(e.key === 'ArrowLeft'){ showGallerySlide(galleryIndex-1); updateLightbox(); }
+      if(e.key === 'ArrowRight'){ showGallerySlide(galleryIndex+1); updateLightbox(); }
+    });
+
     document.getElementById('tabDesc').innerHTML = `<p class="detail-desc" style="max-width:640px;">${product.desc || ''}</p>`;
     document.getElementById('tabSpecs').innerHTML = `
       <table class="spec-table">
@@ -238,10 +326,10 @@
         const rStars = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5-Math.round(p.rating));
         return `
         <div class="product-card">
-          <div class="product-media" style="background:${p.grad};">
-            <a href="product.html?id=${p.id}" aria-label="${p.name}"></a>
+          <div class="product-media">
+            <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
             <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
-            <span data-lucide="${p.icon}" style="width:56px;height:56px;color:rgba(255,255,255,.55);pointer-events:none;"></span>
+            ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
           </div>
           <div class="product-body">
             <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>

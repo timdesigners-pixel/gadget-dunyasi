@@ -224,11 +224,11 @@
       const stars = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5-Math.round(p.rating));
       return `
       <div class="product-card">
-        <div class="product-media" style="background:${p.grad};">
-          <a href="product.html?id=${p.id}" aria-label="${p.name}"></a>
+        <div class="product-media">
+          <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
           <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
           <div class="product-fav"><span data-lucide="heart"></span></div>
-          <span data-lucide="${p.icon}" style="width:56px;height:56px;color:rgba(255,255,255,.55);pointer-events:none;"></span>
+          ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
         </div>
         <div class="product-body">
           <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>
