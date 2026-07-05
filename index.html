@@ -4,355 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>gadgetdünyası | Teknolojinin Adresi</title>
-<style>
-  :root{
-    --bg:#0b1120;
-    --bg-soft:#111a2e;
-    --panel:#141d33;
-    --panel-2:#182342;
-    --line:rgba(255,255,255,0.08);
-    --orange:#ff7a1a;
-    --orange-2:#ff9142;
-    --text:#eef1f8;
-    --muted:#8b93a7;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;text-decoration:none;}
-  img{max-width:100%;display:block;}
-  .wrap{max-width:1680px;margin:0 auto;padding:0 48px;}
-  @media(max-width:640px){
-    .wrap{padding:0 18px;}
-  }
-
-  /* Top strip */
-  .topstrip{background:#080d19;font-size:12px;color:var(--muted);}
-  .topstrip .wrap{display:flex;justify-content:space-between;align-items:center;height:34px;}
-  .topstrip a{margin-right:18px;color:var(--muted);}
-  .topstrip a:hover{color:var(--text);}
-
-  /* Header */
-  header.main{background:var(--bg-soft);border-bottom:1px solid var(--line);}
-  .header-row{display:flex;align-items:center;gap:22px;height:78px;}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:-0.5px;flex-shrink:0;}
-  .logo .mark{
-    width:34px;height:34px;border-radius:9px;
-    background:linear-gradient(135deg,var(--orange),#ffb347);
-    display:flex;align-items:center;justify-content:center;color:#0b1120;font-weight:900;
-  }
-  .logo small{display:block;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:0.5px;}
-
-  .deliver{font-size:12px;color:var(--muted);line-height:1.3;flex-shrink:0;display:flex;gap:6px;align-items:flex-start;}
-  .deliver strong{display:block;color:var(--text);font-size:13px;font-weight:600;}
-
-  .search{flex:1;display:flex;height:44px;border-radius:8px;overflow:hidden;background:#fff;min-width:180px;}
-  .search select{border:none;background:#e9ecf1;color:#333;font-size:12px;padding:0 10px;border-right:1px solid #d8dce3;outline:none;max-width:130px;}
-  .search input{flex:1;border:none;outline:none;padding:0 14px;font-size:14px;color:#111;background:#fff;}
-  .search button{width:52px;background:var(--orange);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;}
-  .search button:hover{background:var(--orange-2);}
-  .search button svg{stroke:#0b1120;}
-
-  .header-actions{display:flex;align-items:center;gap:26px;flex-shrink:0;}
-  .header-actions .item{font-size:12px;color:var(--muted);line-height:1.25;cursor:pointer;}
-  .header-actions .item strong{display:block;font-size:13px;color:var(--text);font-weight:600;}
-  .header-actions .item:hover strong{color:var(--orange-2);}
-  .cart{position:relative;display:flex;align-items:center;gap:6px;cursor:pointer;}
-  .cart .count{
-    position:absolute;top:-8px;right:-10px;background:var(--orange);
-    color:#0b1120;font-size:11px;font-weight:800;border-radius:999px;
-    width:18px;height:18px;display:flex;align-items:center;justify-content:center;
-  }
-  .cart span.label{font-size:13px;font-weight:600;}
-
-  .cart-wrap{position:relative;}
-  .cart-panel{
-    position:absolute;top:calc(100% + 16px);right:0;width:320px;
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    box-shadow:0 20px 50px rgba(0,0,0,.5);padding:14px;z-index:50;
-    display:none;
-  }
-  .cart-panel.open{display:block;}
-  .cart-panel h4{margin:0 0 10px;font-size:14px;font-weight:800;}
-  .cart-items{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
-  .cart-empty{font-size:12.5px;color:var(--muted);text-align:center;padding:22px 0;}
-  .cart-row{display:flex;gap:10px;align-items:center;}
-  .cart-row .thumb{width:44px;height:44px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-  .cart-row .info{flex:1;min-width:0;}
-  .cart-row .info .name{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .cart-row .info .meta{font-size:11.5px;color:var(--muted);}
-  .cart-row .remove{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;}
-  .cart-row .remove:hover{color:#ff5b6b;}
-  .cart-footer{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;}
-  .cart-total{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:10px;}
-  .cart-total span:last-child{color:var(--orange-2);}
-
-  /* Category filters */
-  .cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-  .cat-tab{
-    background:var(--panel);border:1px solid var(--line);color:#c9cfdc;
-    font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer;
-    transition:all .15s;
-  }
-  .cat-tab:hover{border-color:var(--orange);color:var(--orange-2);}
-  .cat-tab.active{background:var(--orange);color:#0b1120;border-color:var(--orange);}
-
-  .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-  .product-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-    display:flex;flex-direction:column;transition:border-color .15s,transform .15s;
-  }
-  .product-card:hover{border-color:rgba(255,122,26,.4);transform:translateY(-3px);}
-  .product-media{aspect-ratio:1/0.85;position:relative;display:flex;align-items:center;justify-content:center;}
-  .product-badge{
-    position:absolute;top:10px;left:10px;font-size:10px;font-weight:800;padding:3px 9px;
-    border-radius:6px;letter-spacing:.3px;
-  }
-  .product-badge.bestseller{background:var(--orange);color:#0b1120;}
-  .product-badge.new{background:#2ed3a3;color:#062018;}
-  .product-badge.sale{background:#ff5b6b;color:#2a0505;}
-  .product-fav{
-    position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;
-    background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
-    color:#fff;backdrop-filter:blur(2px);
-  }
-  .product-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1;}
-  .product-cat{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
-  .product-name{font-size:13.5px;font-weight:700;line-height:1.35;color:var(--text);}
-  .product-rating{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);}
-  .product-rating .stars{color:var(--orange-2);letter-spacing:1px;font-size:12px;}
-  .product-price-row{display:flex;align-items:baseline;gap:8px;margin-top:auto;}
-  .product-price{font-size:17px;font-weight:800;color:var(--text);}
-  .product-old-price{font-size:12.5px;color:var(--muted);text-decoration:line-through;}
-  .product-add{
-    margin-top:6px;background:transparent;border:1.5px solid var(--orange);color:var(--orange-2);
-    font-weight:700;font-size:12.5px;padding:9px;border-radius:8px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;
-  }
-  .product-add:hover{background:var(--orange);color:#0b1120;}
-  .product-add.added{background:#2ed3a3;border-color:#2ed3a3;color:#062018;}
-
-  /* Featured sets (bundles) — carousel */
-  .set-carousel{
-    display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
-    padding-bottom:4px;scrollbar-width:none;
-  }
-  .set-carousel::-webkit-scrollbar{display:none;}
-  .set-card{
-    min-width:calc((100% - 32px)/3);scroll-snap-align:start;
-    background:linear-gradient(150deg,#eef0f5,#d3d8e2);border:1px solid rgba(255,255,255,.15);
-    border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px;
-    transition:transform .15s,box-shadow .15s;
-  }
-  .set-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.35);}
-  .set-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
-  .set-info{min-width:0;}
-  .set-name{font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.4px;line-height:1.25;color:#0b1120;}
-  .set-sub{font-size:11px;color:#4a5568;margin-top:3px;}
-  .set-add{
-    background:var(--orange);color:#0b1120;font-weight:700;font-size:11.5px;
-    padding:6px 12px;border-radius:7px;border:none;cursor:pointer;white-space:nowrap;
-    display:inline-flex;align-items:center;gap:5px;transition:.15s;flex-shrink:0;
-  }
-  .set-add:hover{background:var(--orange-2);}
-  .set-add.added{background:#2ed3a3;}
-  .set-hero-thumbs{display:flex;gap:8px;}
-  .set-hero-thumbs .th{
-    flex:1;aspect-ratio:1.15/1;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  }
-  .set-hero-thumbs .th svg{width:34px;height:34px;stroke:rgba(255,255,255,.8);}
-  .set-price{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
-  .set-price .now{font-size:16px;font-weight:800;color:#0b1120;}
-  .set-price .old{font-size:12px;color:#6b7280;text-decoration:line-through;}
-
-  .carousel-nav{display:flex;gap:8px;}
-  .car-btn{
-    width:34px;height:34px;border-radius:9px;background:var(--panel);border:1px solid var(--line);
-    color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;
-  }
-  .car-btn:hover{border-color:var(--orange);color:var(--orange-2);}
-  .car-btn:disabled{opacity:.35;cursor:default;border-color:var(--line);color:var(--muted);}
-
-  @media(max-width:980px){
-    .set-card{min-width:calc((100% - 16px)/2);}
-  }
-  @media(max-width:560px){
-    .set-card{min-width:88%;}
-  }
-
-  @media(max-width:980px){
-    .product-grid{grid-template-columns:repeat(2,1fr);}
-  }
-  @media(max-width:520px){
-    .product-grid{grid-template-columns:1fr;}
-    .cart-panel{width:280px;right:-40px;}
-  }
-
-  /* Nav */
-  nav.subnav{background:var(--panel);border-bottom:1px solid var(--line);}
-  .subnav .wrap{display:flex;align-items:center;height:44px;gap:26px;font-size:13.5px;overflow-x:auto;}
-  .subnav a{color:#d5d9e3;white-space:nowrap;font-weight:500;}
-  .subnav a:hover{color:var(--orange-2);}
-  .subnav .all-menu{display:flex;align-items:center;gap:7px;font-weight:700;color:var(--text);}
-  .subnav .spacer{flex:1;}
-  .subnav .deal-link{color:var(--orange-2);font-weight:700;}
-
-  /* Hero */
-  .hero-section{padding-top:22px;padding-bottom:22px;}
-  .hero-grid{display:grid;grid-template-columns:2.15fr 1fr;gap:18px;}
-  .hero-slider{
-    position:relative;border-radius:14px;overflow:hidden;min-height:360px;
-    border:1px solid var(--line);
-  }
-  .hero-track{display:flex;height:100%;transition:transform .55s cubic-bezier(.5,.05,.2,1);}
-  .hero-slide{
-    min-width:100%;position:relative;min-height:360px;
-    display:flex;flex-direction:column;justify-content:center;padding:44px;
-    overflow:hidden;
-  }
-  .hero-slide .eyebrow{color:var(--orange-2);font-weight:800;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;position:relative;z-index:2;}
-  .hero-slide h1{font-size:40px;line-height:1.12;font-weight:800;letter-spacing:-1px;margin:0 0 14px;max-width:480px;position:relative;z-index:2;}
-  .hero-slide p{color:#c3cbdb;font-size:14px;margin:0 0 22px;max-width:420px;position:relative;z-index:2;}
-  .hero-slide .btn-orange{position:relative;z-index:2;}
-  .hero-decor{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-  .hero-blob{
-    position:absolute;border-radius:50%;filter:blur(2px);
-  }
-  .hero-icon-big{
-    position:absolute;right:6%;top:50%;transform:translateY(-50%);
-    opacity:.16;z-index:0;pointer-events:none;
-  }
-  .hero-icon-big svg{width:230px;height:230px;stroke:#fff;}
-  .btn-orange{
-    background:var(--orange);color:#0b1120;font-weight:700;font-size:14px;
-    padding:13px 26px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;
-    align-items:center;gap:8px;width:fit-content;transition:background .15s,transform .15s;
-  }
-  .btn-orange:hover{background:var(--orange-2);transform:translateY(-1px);}
-  .btn-ghost{
-    background:rgba(255,255,255,.08);color:#fff;font-weight:700;font-size:14px;
-    padding:13px 26px;border-radius:8px;border:1px solid rgba(255,255,255,.25);cursor:pointer;
-    display:inline-flex;align-items:center;gap:8px;width:fit-content;transition:.15s;position:relative;z-index:2;
-  }
-  .btn-ghost:hover{background:rgba(255,255,255,.16);}
-  .hero-dots{position:absolute;bottom:16px;left:44px;display:flex;gap:7px;z-index:5;}
-  .hero-dots button{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);border:none;cursor:pointer;padding:0;transition:.2s;}
-  .hero-dots button.active{background:var(--orange);width:20px;border-radius:4px;}
-  .hero-arrow{
-    position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:10px;
-    background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
-    border:1px solid rgba(255,255,255,.12);z-index:5;cursor:pointer;color:#fff;backdrop-filter:blur(3px);transition:.15s;
-  }
-  .hero-arrow:hover{background:rgba(0,0,0,.6);}
-  .hero-arrow.prev{left:14px;}
-  .hero-arrow.next{right:14px;}
-
-  .hero-side{display:flex;flex-direction:column;gap:18px;}
-  .side-card{
-    flex:1;border-radius:14px;padding:26px;position:relative;overflow:hidden;
-    background:linear-gradient(135deg,var(--panel-2),#0f1729);border:1px solid var(--line);
-    display:flex;flex-direction:column;justify-content:center;
-  }
-  .side-card::after{
-    content:'';position:absolute;width:140px;height:140px;border-radius:50%;
-    background:radial-gradient(circle,rgba(255,145,20,.18),transparent 70%);
-    right:-40px;top:-40px;
-  }
-  .side-card h3{font-size:19px;font-weight:800;margin:0 0 8px;letter-spacing:-0.3px;}
-  .side-card p{font-size:12.5px;color:var(--muted);margin:0 0 14px;max-width:220px;}
-  .side-card a{color:var(--orange-2);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:4px;}
-
-  /* Section heading */
-  .section{padding-top:34px;padding-bottom:34px;}
-  .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .section-head h2{font-size:21px;font-weight:800;letter-spacing:-0.3px;margin:0;}
-  .section-head .handle{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;}
-  .filter-btn{
-    background:var(--panel);border:1px solid var(--line);color:var(--text);
-    font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:8px;cursor:pointer;
-    display:flex;align-items:center;gap:6px;
-  }
-  .filter-btn:hover{border-color:var(--orange);color:var(--orange-2);}
-
-  .social-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
-  .social-item{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel);}
-  .social-thumb{aspect-ratio:1/1;position:relative;overflow:hidden;}
-  .social-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
-  .social-item:hover .social-thumb img{transform:scale(1.06);}
-  .social-thumb .ig{
-    position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:6px;
-    background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);
-  }
-  .social-tag{padding:9px 10px;font-size:12px;font-weight:600;color:#c9cfdc;}
-
-  .video-grid{display:grid;grid-template-columns:repeat(3,1fr) 1.1fr;gap:16px;}
-  .video-card{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel);}
-  .video-thumb{position:relative;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,#1b2848,#0e1526);}
-  .video-thumb img{width:100%;height:100%;object-fit:cover;}
-  .video-thumb .badge{position:absolute;top:8px;left:8px;background:#e11d1d;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;letter-spacing:.5px;}
-  .play-btn{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  }
-  .play-btn span{
-    width:46px;height:46px;border-radius:50%;background:rgba(225,29,29,.92);
-    display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.4);
-  }
-  .video-caption{padding:11px 12px;font-size:12.5px;font-weight:600;color:#dfe3ed;}
-  .video-caption b{color:var(--orange-2);}
-
-  .promo-card{
-    border-radius:12px;border:1px solid rgba(255,122,26,.35);
-    background:linear-gradient(160deg,#241608,#161022);
-    padding:20px;display:flex;flex-direction:column;justify-content:space-between;
-  }
-  .promo-card h4{font-size:14.5px;font-weight:800;margin:0 0 14px;text-align:center;line-height:1.35;}
-  .promo-bar{height:9px;border-radius:999px;background:#2b1f14;overflow:hidden;margin-bottom:8px;}
-  .promo-bar i{display:block;height:100%;width:32%;background:linear-gradient(90deg,var(--orange),#ffce8a);border-radius:999px;}
-  .promo-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:16px;}
-  .promo-btn{
-    background:var(--orange);color:#0b1120;font-weight:700;font-size:13px;text-align:center;
-    padding:11px;border-radius:8px;border:none;cursor:pointer;width:100%;
-  }
-  .promo-btn:hover{background:var(--orange-2);}
-
-  /* Footer */
-  footer{background:#080d19;border-top:1px solid var(--line);padding:44px 0 26px;margin-top:16px;}
-  .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:32px;}
-  footer h5{font-size:14px;font-weight:800;margin:0 0 14px;}
-  footer p, footer a{font-size:12.5px;color:var(--muted);line-height:2;display:block;}
-  footer a:hover{color:var(--orange-2);}
-  .store-badges{display:flex;gap:8px;margin-top:10px;}
-  .store-badges div{
-    border:1px solid var(--line);border-radius:7px;padding:7px 12px;font-size:11px;
-    display:flex;align-items:center;gap:6px;color:#d5d9e3;font-weight:600;
-  }
-  .social-icons{display:flex;gap:10px;margin-top:6px;}
-  .social-icons span{
-    width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .pay-icons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-  .pay-icons div{
-    width:40px;height:26px;border-radius:5px;background:var(--panel);border:1px solid var(--line);
-    font-size:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;
-  }
-  .footer-bottom{border-top:1px solid var(--line);margin-top:30px;padding-top:18px;
-    display:flex;justify-content:space-between;font-size:11.5px;color:#5b6478;}
-
-  @media(max-width:980px){
-    .header-row{flex-wrap:wrap;height:auto;padding-top:14px;padding-bottom:14px;}
-    .deliver{display:none;}
-    .hero-grid{grid-template-columns:1fr;}
-    .social-grid{grid-template-columns:repeat(3,1fr);}
-    .video-grid{grid-template-columns:repeat(2,1fr);}
-    .footer-grid{grid-template-columns:1fr 1fr;}
-  }
-</style>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -367,7 +20,7 @@
 <!-- Header -->
 <header class="main">
   <div class="wrap header-row">
-    <a href="#" class="logo">
+    <a href="index.html" class="logo">
       <span class="mark">G</span>
       <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
     </a>
@@ -377,23 +30,25 @@
       <div>Teslimat Adresi<strong>İstanbul, 34600</strong></div>
     </div>
 
-    <div class="search">
-      <select>
-        <option>Tüm Kategoriler</option>
-        <option>Telefon</option>
-        <option>Bilgisayar</option>
-        <option>Kulaklık</option>
-        <option>Aksesuar</option>
+    <form class="search" id="headerSearchForm" action="products.html" method="get">
+      <select name="cat" id="headerCatSelect">
+        <option value="all">Tüm Kategoriler</option>
+        <option value="telefon">Telefon</option>
+        <option value="bilgisayar">Bilgisayar &amp; Tablet</option>
+        <option value="kulaklik">Ses &amp; Kulaklık</option>
+        <option value="oyun">Oyun</option>
+        <option value="aksesuar">Aksesuar</option>
+        <option value="giyilebilir">Giyilebilir</option>
       </select>
-      <input type="text" placeholder="Ürün, kategori veya marka ara...">
-      <button aria-label="Ara">
+      <input type="text" name="q" placeholder="Ürün, kategori veya marka ara...">
+      <button type="submit" aria-label="Ara">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1120" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-    </div>
+    </form>
 
     <div class="header-actions">
-      <div class="item">Hesabım ve Listeler<strong>Hesap ve Listeler ▾</strong></div>
-      <div class="item">İadeler<strong>ve Siparişler</strong></div>
+      <a class="item" href="account.html">Hesabım ve Listeler<strong id="accountLabel">Hesap ve Listeler ▾</strong></a>
+      <a class="item" href="account.html">İadeler<strong>ve Siparişler</strong></a>
       <div class="cart-wrap">
         <div class="cart" id="cartToggle">
           <i data-lucide="shopping-cart" style="width:24px;height:24px;"></i>
@@ -407,7 +62,7 @@
           </div>
           <div class="cart-footer">
             <div class="cart-total"><span>Toplam</span><span id="cartTotal">0 TL</span></div>
-            <button class="btn-orange" style="width:100%;justify-content:center;">Sepete Git</button>
+            <button class="btn-orange" id="cartGoBtn" style="width:100%;justify-content:center;">Sepete Git</button>
           </div>
         </div>
       </div>
@@ -418,14 +73,14 @@
 <!-- Sub nav -->
 <nav class="subnav">
   <div class="wrap">
-    <a href="#" class="all-menu"><i data-lucide="menu" style="width:16px;height:16px;"></i> Tümü</a>
-    <a href="#">Çok Satanlar</a>
-    <a href="#">Günün Fırsatları</a>
-    <a href="#">Müşteri Hizmetleri</a>
-    <a href="#">Yeni Çıkanlar</a>
-    <a href="#">Hediye Fikirleri</a>
+    <a href="products.html" class="all-menu"><i data-lucide="menu" style="width:16px;height:16px;"></i> Tümü</a>
+    <a href="products.html?badge=bestseller">Çok Satanlar</a>
+    <a href="products.html?badge=sale">Günün Fırsatları</a>
+    <a href="account.html">Müşteri Hizmetleri</a>
+    <a href="products.html?badge=new">Yeni Çıkanlar</a>
+    <a href="products.html">Hediye Fikirleri</a>
     <div class="spacer"></div>
-    <a href="#" class="deal-link">Prime'a Özel Fırsatlar</a>
+    <a href="products.html?badge=sale" class="deal-link">Prime'a Özel Fırsatlar</a>
   </div>
 </nav>
 
@@ -447,12 +102,12 @@
       <div class="side-card">
         <h3>Kişiye Özel Küasyonlar</h3>
         <p>Sana en uygun ürünleri sizin için seçtik.</p>
-        <a href="#">Keşfet <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
+        <a href="products.html">Keşfet <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
       </div>
       <div class="side-card">
         <h3>Hızlı Teslimat Garantisi</h3>
         <p>Yarın kapında olmazsa para iadesi.</p>
-        <a href="#">Detaylar <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
+        <a href="products.html">Detaylar <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
       </div>
     </div>
   </div>
@@ -484,6 +139,7 @@
       <h2>Çok Satan Ürünler</h2>
       <div class="handle">En çok tercih edilen 16 ürün</div>
     </div>
+    <a href="products.html" class="filter-btn">Tümünü Gör <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></a>
   </div>
   <div class="cat-tabs" id="catTabs"></div>
   <div class="product-grid" id="productGrid"></div>
@@ -533,7 +189,7 @@
         <div class="promo-bar"><i></i></div>
         <div class="promo-labels"><span>320 TL</span><span>1000 TL'ye kadar</span></div>
       </div>
-      <button class="promo-btn">Paketimi Şimdi Seç</button>
+      <a href="products.html" class="promo-btn" style="display:block;text-align:center;">Paketimi Şimdi Seç</a>
     </div>
   </div>
 </section>
@@ -548,16 +204,16 @@
     <div>
       <h5>Müşteri Hizmetleri</h5>
       <a href="#">İletişim</a>
-      <a href="#">Sipariş Takibi</a>
+      <a href="account.html">Sipariş Takibi</a>
       <a href="#">İade &amp; Değişim</a>
       <a href="#">Sıkça Sorulan Sorular</a>
     </div>
     <div>
       <h5>Kategoriler</h5>
-      <a href="#">Telefon &amp; Aksesuar</a>
-      <a href="#">Bilgisayar &amp; Tablet</a>
-      <a href="#">Ses &amp; Görüntü</a>
-      <a href="#">Akıllı Ev</a>
+      <a href="products.html?cat=telefon">Telefon</a>
+      <a href="products.html?cat=bilgisayar">Bilgisayar &amp; Tablet</a>
+      <a href="products.html?cat=kulaklik">Ses &amp; Kulaklık</a>
+      <a href="products.html?cat=oyun">Oyun</a>
     </div>
     <div>
       <h5>Sosyal Medya &amp; Bülten</h5>
@@ -582,70 +238,12 @@
   </div>
 </footer>
 
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
 <script>
-  /* ---------- Yerel ikon sistemi (harici CDN'e bağımlı değil) ---------- */
-  const ICONS = {
-    'map-pin': '<path d="M12 21s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/>',
-    'arrow-right': '<line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/>',
-    'chevron-right': '<polyline points="9 6 15 12 9 18"/>',
-    'instagram': '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>',
-    'sliders-horizontal': '<line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2"/>',
-    'play': '<polygon points="6 4 20 12 6 20 6 4"/>',
-    'facebook': '<path d="M15 3h-3a4 4 0 0 0-4 4v3H5v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
-    'twitter': '<path d="M22 4.6c-.8.4-1.6.7-2.5.8.9-.5 1.6-1.4 1.9-2.4-.8.5-1.8.9-2.8 1.1a4.4 4.4 0 0 0-7.5 4c-3.6-.2-6.9-1.9-9-4.6-.4.6-.6 1.4-.6 2.1 0 1.5.7 2.8 1.9 3.5-.7 0-1.4-.2-1.9-.5v.1c0 2 1.5 3.7 3.4 4.1-.6.2-1.2.2-1.8.1.5 1.7 2.1 2.9 3.9 2.9A8.8 8.8 0 0 1 2 19.5 12.4 12.4 0 0 0 8.7 21.5c8 0 12.4-6.6 12.4-12.4v-.6c.9-.6 1.6-1.4 2.1-2.3z"/>',
-    'youtube': '<rect x="2.5" y="6" width="19" height="12" rx="3"/><polygon points="10 9 15 12 10 15 10 9"/>',
-    'apple': '<path d="M16.5 3c.2 1.4-.4 2.7-1.2 3.6-.9 1-2.2 1.7-3.4 1.6-.2-1.3.4-2.7 1.2-3.6C13.9 3.6 15.2 3 16.5 3z"/><path d="M20 17c-.5 1.2-1.1 2.3-2 3.3-1 1.1-2 2.2-3.5 2.2-1.4 0-1.9-.9-3.6-.9s-2.2.9-3.6.9c-1.4 0-2.5-1.2-3.5-2.3C1.9 18 1 15 2.2 12.4c.8-1.8 2.3-3 4-3 1.3 0 2.2.9 3.3.9 1 0 1.8-.9 3.5-.9 1.3 0 2.7.7 3.7 1.9-3.3 1.8-2.8 6.3.3 7.5-.4.8-.6 1.1-1 1.2z"/>',
-    'shopping-cart': '<circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.6 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 8H6"/>',
-    'x': '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
-    'check': '<polyline points="20 6 9 17 4 12"/>',
-    'menu': '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
-    'heart': '<path d="M12 21s-7.5-4.6-10-9.3C.5 8.6 2 5 5.5 5c2 0 3.4 1.1 4.2 2.2.4.5 1 1.4 1.5 1.4h.6c.5 0 1.1-.9 1.5-1.4C14.1 6.1 15.5 5 17.5 5 21 5 22.5 8.6 21 11.7 18.5 16.4 12 21 12 21z"/>',
-    'smartphone': '<rect x="6" y="2" width="12" height="20" rx="2"/><line x1="10" y1="18" x2="14" y2="18"/>',
-    'headphones': '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="7" rx="1.5"/><rect x="17" y="14" width="5" height="7" rx="1.5"/>',
-    'laptop': '<rect x="4" y="4" width="16" height="10" rx="1"/><path d="M2 20h20"/>',
-    'watch': '<circle cx="12" cy="12" r="6"/><path d="M12 9v3l2 1.5"/><path d="M9 3h6M9 21h6"/>',
-    'camera': '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
-    'gamepad-2': '<rect x="2" y="7" width="20" height="10" rx="4"/><path d="M6 10v4M4 12h4"/><circle cx="15" cy="11" r="1"/><circle cx="18" cy="13" r="1"/>',
-    'tablet': '<rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>',
-    'battery-charging': '<path d="M15 6H3a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h9"/><path d="M22 13.5V10a2 2 0 0 0-2-2h-1"/><polyline points="11 6 8 12 13 12 10 18"/>',
-    'tv': '<rect x="2" y="7" width="20" height="13" rx="2"/><polyline points="8 3 12 7 16 3"/>',
-    'gift': '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/><path d="M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5z"/><path d="M12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5z"/>',
-    'baby': '<path d="M9 12h.01M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1-8 5.7 9 9 0 0 1-8-5.7"/><circle cx="12" cy="12" r="9"/>',
-    'thermometer': '<path d="M14 4.5a2.5 2.5 0 0 0-5 0v9a4 4 0 1 0 5 0z"/>',
-    'keyboard': '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>',
-    'monitor': '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
-    'mouse': '<rect x="6" y="3" width="12" height="18" rx="6"/><line x1="12" y1="7" x2="12" y2="11"/>',
-    'speaker': '<rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="14" r="4"/><circle cx="12" cy="6" r="1"/>',
-    'mic': '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/>',
-    'package': '<path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/>'
-  };
-
-  function createIconsIn(root){
-    (root || document).querySelectorAll('[data-lucide]').forEach(el=>{
-      const name = el.getAttribute('data-lucide');
-      const path = ICONS[name];
-      if(!path) return;
-      const svgNS = 'http://www.w3.org/2000/svg';
-      const svg = document.createElementNS(svgNS, 'svg');
-      svg.setAttribute('viewBox', '0 0 24 24');
-      svg.setAttribute('fill', 'none');
-      svg.setAttribute('stroke', 'currentColor');
-      svg.setAttribute('stroke-width', '2');
-      svg.setAttribute('stroke-linecap', 'round');
-      svg.setAttribute('stroke-linejoin', 'round');
-      svg.innerHTML = path;
-      // Sınıf/stil/renk özniteliklerini eski <i> etiketinden aktar
-      if(el.getAttribute('style')) svg.setAttribute('style', el.getAttribute('style'));
-      if(el.getAttribute('class')) svg.setAttribute('class', el.getAttribute('class'));
-      el.replaceWith(svg);
-    });
-  }
-  // Küçük bir uyumluluk katmanı: kodun geri kalanı lucide.createIcons() çağırıyor
-  const lucide = { createIcons: () => createIconsIn(document) };
-
   lucide.createIcons();
-
-  const fmt = n => n.toLocaleString('tr-TR') + ' TL';
 
   /* ---------- HERO SLIDER (5 slayt, otomatik döngü) ---------- */
   const slides = [
@@ -653,7 +251,7 @@
       eyebrow:'Haftanın Fırsatı',
       title:'Gamer Dünyasını<br>Yeniden Keşfet.',
       text:'Seçili gaming setlerinde sepette %20 indirim. Dönüştüren teknolojiye şimdi göz atın.',
-      cta:'Fırsatları İncele', ctaClass:'btn-orange',
+      cta:'Fırsatları İncele', ctaClass:'btn-orange', href:'products.html?cat=oyun',
       bg:'radial-gradient(circle at 78% 55%, rgba(255,145,20,.18), transparent 55%),linear-gradient(115deg,#111a30,#0d1424 60%,#161033)',
       icon:'gamepad-2',
       blobs:[{c:'rgba(122,90,240,.25)',s:260,x:'70%',y:'20%'},{c:'rgba(255,122,26,.20)',s:200,x:'82%',y:'75%'}]
@@ -662,7 +260,7 @@
       eyebrow:'Yeni Sezon',
       title:'Hayatını Güncelle.<br>Geleceği Yakala.',
       text:'Akıllı ev, ses ve görüntü sistemlerinde kaçırılmayacak kampanyalar seni bekliyor.',
-      cta:'Şimdi Keşfet', ctaClass:'btn-ghost',
+      cta:'Şimdi Keşfet', ctaClass:'btn-ghost', href:'products.html',
       bg:'radial-gradient(circle at 20% 30%, rgba(120,90,60,.35), transparent 55%),linear-gradient(120deg,#1b1712,#100d0a 60%,#231a12)',
       icon:'tv',
       blobs:[{c:'rgba(200,150,90,.22)',s:300,x:'75%',y:'40%'},{c:'rgba(255,200,120,.14)',s:180,x:'88%',y:'80%'}]
@@ -671,7 +269,7 @@
       eyebrow:'Akıllı Saatler',
       title:'Bileğinde<br>Yeni Nesil Teknoloji.',
       text:'Sağlık takibi, GPS ve günlerce pil ömrü. En yeni akıllı saat modelleri stoklarda.',
-      cta:'Modelleri Gör', ctaClass:'btn-orange',
+      cta:'Modelleri Gör', ctaClass:'btn-orange', href:'products.html?cat=giyilebilir',
       bg:'radial-gradient(circle at 75% 50%, rgba(46,211,163,.20), transparent 55%),linear-gradient(120deg,#0d1f1c,#0b1512 60%,#10231f)',
       icon:'watch',
       blobs:[{c:'rgba(46,211,163,.22)',s:260,x:'72%',y:'30%'},{c:'rgba(90,200,255,.14)',s:190,x:'85%',y:'78%'}]
@@ -680,7 +278,7 @@
       eyebrow:'Ses Deneyimi',
       title:'Müziği Olması<br>Gerektiği Gibi Duy.',
       text:'Aktif gürültü engelleme ve stüdyo kalitesinde ses. Premium kulaklıklarda büyük indirim.',
-      cta:'Kulaklıkları İncele', ctaClass:'btn-orange',
+      cta:'Kulaklıkları İncele', ctaClass:'btn-orange', href:'products.html?cat=kulaklik',
       bg:'radial-gradient(circle at 74% 45%, rgba(150,90,240,.22), transparent 55%),linear-gradient(120deg,#16112a,#100c1f 60%,#1e1436)',
       icon:'headphones',
       blobs:[{c:'rgba(150,90,240,.26)',s:280,x:'72%',y:'35%'},{c:'rgba(255,110,180,.14)',s:180,x:'86%',y:'80%'}]
@@ -689,7 +287,7 @@
       eyebrow:'Süper Kampanya',
       title:'Sepette Ekstra<br>%30 İndirim.',
       text:'Binlerce üründe geçerli dev indirim günleri başladı. Kaçırmadan sepetini doldur.',
-      cta:'Kampanyaya Git', ctaClass:'btn-orange',
+      cta:'Kampanyaya Git', ctaClass:'btn-orange', href:'products.html?badge=sale',
       bg:'radial-gradient(circle at 76% 50%, rgba(255,122,26,.28), transparent 55%),linear-gradient(120deg,#2a1608,#180d05 60%,#331a08)',
       icon:'gift',
       blobs:[{c:'rgba(255,122,26,.30)',s:300,x:'74%',y:'40%'},{c:'rgba(255,200,120,.16)',s:190,x:'88%',y:'80%'}]
@@ -710,9 +308,9 @@
         <div class="eyebrow">${s.eyebrow}</div>
         <h1>${s.title}</h1>
         <p>${s.text}</p>
-        <button class="${s.ctaClass}">${s.cta}
+        <a class="${s.ctaClass}" href="${s.href}">${s.cta}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
-        </button>
+        </a>
       </div>`;
   }).join('');
 
@@ -721,7 +319,7 @@
   // big background icons need larger stroke sizing
   heroTrack.querySelectorAll('.hero-icon-big').forEach(el=>{
     const name = el.getAttribute('data-lucide');
-    const path = ICONS[name] || '';
+    const path = GD.ICONS[name] || '';
     el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
   });
 
@@ -767,25 +365,11 @@
     item.title = post.caption;
     socialGrid.appendChild(item);
   });
+  GD.createIconsIn(socialGrid);
 
-  /* ---------- Öne Çıkan Setler — paket verisi ---------- */
-  const sets = [
-    { id:'s1', name:'Yeni Anne Setleri', featured:true,  items:5, price:6499,  oldPrice:8299,
-      thumbs:[ {icon:'baby',grad:'linear-gradient(150deg,#94a3b8,#64748b)'}, {icon:'thermometer',grad:'linear-gradient(150deg,#a3b1c2,#788699)'}, {icon:'headphones',grad:'linear-gradient(150deg,#8b97a8,#5b6678)'} ] },
-    { id:'s2', name:'Akıllı Saatler',    featured:false, items:4, price:12999, oldPrice:15999,
-      thumbs:[ {icon:'watch',grad:'linear-gradient(150deg,#2a3a52,#101725)'}, {icon:'watch',grad:'linear-gradient(150deg,#3a2b52,#160f24)'}, {icon:'watch',grad:'linear-gradient(150deg,#1f3b3a,#0d1a19)'} ] },
-    { id:'s3', name:'Lüks Teknoloji',    featured:false, items:6, price:38999, oldPrice:45999,
-      thumbs:[ {icon:'tv',grad:'linear-gradient(150deg,#22345c,#0e1526)'}, {icon:'speaker',grad:'linear-gradient(150deg,#2a2a3a,#12121c)'}, {icon:'watch',grad:'linear-gradient(150deg,#2a3a52,#101725)'} ] },
-    { id:'s4', name:'Oyuncu Başlangıç Seti', featured:true, items:5, price:18499, oldPrice:22999,
-      thumbs:[ {icon:'gamepad-2',grad:'linear-gradient(150deg,#a3a9b8,#6b7180)'}, {icon:'headphones',grad:'linear-gradient(150deg,#9aa3b5,#646e80)'}, {icon:'keyboard',grad:'linear-gradient(150deg,#8f97a8,#5b6478)'} ] },
-    { id:'s5', name:'Ofis & Çalışma Seti', featured:false, items:4, price:24999, oldPrice:29999,
-      thumbs:[ {icon:'laptop',grad:'linear-gradient(150deg,#1f3b3a,#0d1a19)'}, {icon:'monitor',grad:'linear-gradient(150deg,#22345c,#0e1526)'}, {icon:'mouse',grad:'linear-gradient(150deg,#2a3a52,#101725)'} ] },
-    { id:'s6', name:'Ses Sistemi Seti',  featured:false, items:3, price:9499,  oldPrice:11999,
-      thumbs:[ {icon:'speaker',grad:'linear-gradient(150deg,#3a2b52,#160f24)'}, {icon:'headphones',grad:'linear-gradient(150deg,#2a2a3a,#12121c)'}, {icon:'mic',grad:'linear-gradient(150deg,#22345c,#0e1526)'} ] }
-  ];
-
+  /* ---------- Öne Çıkan Setler ---------- */
   const setCarousel = document.getElementById('setCarousel');
-  setCarousel.innerHTML = sets.map(s=>`
+  setCarousel.innerHTML = GD.SETS.map(s=>`
     <div class="set-card">
       <div class="set-top">
         <div class="set-info">
@@ -801,14 +385,14 @@
         ${s.thumbs.map(t=>`<div class="th" style="background:${t.grad};"><span data-lucide="${t.icon}"></span></div>`).join('')}
       </div>
       <div class="set-price">
-        <span class="now">${fmt(s.price)}</span>
-        <span class="old">${fmt(s.oldPrice)}</span>
+        <span class="now">${GD.fmt(s.price)}</span>
+        <span class="old">${GD.fmt(s.oldPrice)}</span>
       </div>
     </div>`).join('');
 
   // render set thumb icons
   setCarousel.querySelectorAll('.th [data-lucide]').forEach(el=>{
-    const path = ICONS[el.getAttribute('data-lucide')] || '';
+    const path = GD.ICONS[el.getAttribute('data-lucide')] || '';
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','none');
     svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','1.8');
@@ -819,8 +403,9 @@
 
   setCarousel.querySelectorAll('.set-add').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      const s = sets.find(x=>x.id===btn.dataset.id);
-      addToCart({ id:s.id, name:s.name+' (Set)', price:s.price, icon:'package', grad:'linear-gradient(150deg,#ff7a1a,#7a4d0c)' });
+      const s = GD.SETS.find(x=>x.id===btn.dataset.id);
+      GD.addToCart({ id:s.id, name:s.name+' (Set)', price:s.price, icon:'package', grad:'linear-gradient(150deg,#ff7a1a,#7a4d0c)' });
+      GD.openCartPanel();
       btn.classList.add('added');
       const original = btn.innerHTML;
       btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Eklendi`;
@@ -845,44 +430,14 @@
   window.addEventListener('resize', updateSetNav);
   updateSetNav();
 
-  /* ---------- Çok Satan Ürünler — 16 ürün + pill filtre ---------- */
-  const products = [
-    { id:1,  cat:'telefon',    name:'Aurora X12 Pro 256GB',            price:34999, oldPrice:39999, rating:4.7, reviews:312, badge:'bestseller', icon:'smartphone', grad:'linear-gradient(150deg,#22345c,#0e1526)' },
-    { id:2,  cat:'telefon',    name:'Lumen S8 128GB',                  price:21999, oldPrice:null,  rating:4.4, reviews:145, badge:'new',        icon:'smartphone', grad:'linear-gradient(150deg,#2a2f5c,#101528)' },
-    { id:3,  cat:'telefon',    name:'Nimbus Note 12 512GB',            price:28999, oldPrice:32999, rating:4.6, reviews:203, badge:'sale',       icon:'smartphone', grad:'linear-gradient(150deg,#1f3550,#0d1622)' },
-    { id:4,  cat:'bilgisayar', name:'NovaBook 15" i7 16GB/512GB',      price:52999, oldPrice:null,  rating:4.8, reviews:198, badge:'bestseller', icon:'laptop',     grad:'linear-gradient(150deg,#1f3b3a,#0d1a19)' },
-    { id:5,  cat:'bilgisayar', name:'GridPad 11" Tablet + Kılıf',      price:14999, oldPrice:17999, rating:4.3, reviews:98,  badge:'sale',       icon:'tablet',     grad:'linear-gradient(150deg,#20403c,#0d1a18)' },
-    { id:6,  cat:'bilgisayar', name:'ProView 27" 4K Monitör',          price:11499, oldPrice:13499, rating:4.7, reviews:167, badge:'sale',       icon:'monitor',    grad:'linear-gradient(150deg,#1c3a44,#0c1720)' },
-    { id:7,  cat:'kulaklik',   name:'PulseSound ANC Kulaklık',         price:4499,  oldPrice:5999,  rating:4.6, reviews:864, badge:'bestseller', icon:'headphones', grad:'linear-gradient(150deg,#3a2b52,#160f24)' },
-    { id:8,  cat:'kulaklik',   name:'AirBeat Pro TWS',                 price:2299,  oldPrice:2899,  rating:4.5, reviews:1203,badge:'sale',       icon:'headphones', grad:'linear-gradient(150deg,#42305c,#170f26)' },
-    { id:9,  cat:'kulaklik',   name:'StudioMic USB Mikrofon',          price:1899,  oldPrice:null,  rating:4.4, reviews:322, badge:'new',        icon:'mic',        grad:'linear-gradient(150deg,#38305c,#150f26)' },
-    { id:10, cat:'oyun',       name:'StrikePad RGB Klavye',            price:2199,  oldPrice:null,  rating:4.9, reviews:521, badge:'bestseller', icon:'keyboard',   grad:'linear-gradient(150deg,#4a2a2a,#1c1010)' },
-    { id:11, cat:'oyun',       name:'VoltGrip Kablosuz Gamepad',       price:1799,  oldPrice:2299,  rating:4.6, reviews:410, badge:'sale',       icon:'gamepad-2',  grad:'linear-gradient(150deg,#4a2f2a,#1c1310)' },
-    { id:12, cat:'oyun',       name:'RaptorX Oyuncu Faresi',           price:1299,  oldPrice:null,  rating:4.7, reviews:288, badge:'new',        icon:'mouse',      grad:'linear-gradient(150deg,#452a3a,#1a0f18)' },
-    { id:13, cat:'aksesuar',   name:'PowerCell 20.000mAh Powerbank',   price:899,   oldPrice:null,  rating:4.7, reviews:1032,badge:'bestseller', icon:'battery-charging', grad:'linear-gradient(150deg,#2a3a52,#101725)' },
-    { id:14, cat:'aksesuar',   name:'SonicBox Bluetooth Hoparlör',     price:1599,  oldPrice:1999,  rating:4.5, reviews:576, badge:'sale',       icon:'speaker',    grad:'linear-gradient(150deg,#243a52,#0f1725)' },
-    { id:15, cat:'giyilebilir',name:'ChronoFit 2 Akıllı Saat',         price:3299,  oldPrice:3899,  rating:4.5, reviews:276, badge:'bestseller', icon:'watch',      grad:'linear-gradient(150deg,#2a3a52,#101725)' },
-    { id:16, cat:'giyilebilir',name:'Vortex Band SE',                  price:1999,  oldPrice:null,  rating:4.3, reviews:189, badge:'new',        icon:'watch',      grad:'linear-gradient(150deg,#2f3a52,#111725)' }
-  ];
-
-  const categories = [
-    { key:'all', label:'Tümü' },
-    { key:'telefon', label:'Telefon' },
-    { key:'bilgisayar', label:'Bilgisayar & Tablet' },
-    { key:'kulaklik', label:'Ses & Kulaklık' },
-    { key:'oyun', label:'Oyun' },
-    { key:'aksesuar', label:'Aksesuar' },
-    { key:'giyilebilir', label:'Giyilebilir' }
-  ];
-  const badgeLabel = { bestseller:'Çok Satan', new:'Yeni', sale:'İndirim' };
-
+  /* ---------- Çok Satan Ürünler — pill filtre ---------- */
   const catTabs = document.getElementById('catTabs');
   const productGrid = document.getElementById('productGrid');
   let activeCat = 'all';
 
   function renderTabs(){
     catTabs.innerHTML = '';
-    categories.forEach(c=>{
+    GD.CATEGORIES.forEach(c=>{
       const btn = document.createElement('button');
       btn.className = 'cat-tab' + (c.key === activeCat ? ' active' : '');
       btn.textContent = c.label;
@@ -892,23 +447,24 @@
   }
 
   function renderProducts(){
-    const list = activeCat === 'all' ? products : products.filter(p=>p.cat===activeCat);
+    const list = activeCat === 'all' ? GD.PRODUCTS : GD.PRODUCTS.filter(p=>p.cat===activeCat);
     productGrid.innerHTML = list.map(p=>{
       const stars = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5-Math.round(p.rating));
       return `
       <div class="product-card">
         <div class="product-media" style="background:${p.grad};">
-          <span class="product-badge ${p.badge}">${badgeLabel[p.badge]}</span>
+          <a href="product.html?id=${p.id}" aria-label="${p.name}"></a>
+          <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
           <div class="product-fav"><span data-lucide="heart"></span></div>
-          <span data-lucide="${p.icon}" style="width:56px;height:56px;color:rgba(255,255,255,.55);"></span>
+          <span data-lucide="${p.icon}" style="width:56px;height:56px;color:rgba(255,255,255,.55);pointer-events:none;"></span>
         </div>
         <div class="product-body">
-          <div class="product-cat">${categories.find(c=>c.key===p.cat)?.label || p.cat}</div>
-          <div class="product-name">${p.name}</div>
+          <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>
+          <div class="product-name"><a href="product.html?id=${p.id}">${p.name}</a></div>
           <div class="product-rating"><span class="stars">${stars}</span> ${p.rating} (${p.reviews})</div>
           <div class="product-price-row">
-            <span class="product-price">${fmt(p.price)}</span>
-            ${p.oldPrice ? `<span class="product-old-price">${fmt(p.oldPrice)}</span>` : ''}
+            <span class="product-price">${GD.fmt(p.price)}</span>
+            ${p.oldPrice ? `<span class="product-old-price">${GD.fmt(p.oldPrice)}</span>` : ''}
           </div>
           <button class="product-add" data-id="${p.id}">
             <span data-lucide="shopping-cart" style="width:14px;height:14px;"></span> Sepete Ekle
@@ -916,11 +472,12 @@
         </div>
       </div>`;
     }).join('');
-    createIconsIn(productGrid);
+    GD.createIconsIn(productGrid);
     productGrid.querySelectorAll('.product-add').forEach(btn=>{
       btn.addEventListener('click', ()=>{
-        const product = products.find(p=>p.id === Number(btn.dataset.id));
-        addToCart(product);
+        const product = GD.getProduct(btn.dataset.id);
+        GD.addToCart(product);
+        GD.openCartPanel();
         btn.classList.add('added');
         btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Eklendi`;
         setTimeout(()=>{
@@ -934,63 +491,7 @@
   renderTabs();
   renderProducts();
 
-  /* ---------- Sepet (dropdown) ---------- */
-  let cart = [];
-  const cartToggle = document.getElementById('cartToggle');
-  const cartPanel = document.getElementById('cartPanel');
-  const cartItemsEl = document.getElementById('cartItems');
-  const cartCountEl = document.getElementById('cartCount');
-  const cartTotalEl = document.getElementById('cartTotal');
-
-  function addToCart(product){
-    const existing = cart.find(i=>i.id===product.id);
-    if(existing){ existing.qty += 1; } else { cart.push({...product, qty:1}); }
-    renderCart();
-    cartPanel.classList.add('open');
-  }
-
-  function removeFromCart(id){
-    cart = cart.filter(i=>i.id!==id);
-    renderCart();
-  }
-
-  function renderCart(){
-    const totalCount = cart.reduce((s,i)=>s+i.qty,0);
-    const totalPrice = cart.reduce((s,i)=>s+i.qty*i.price,0);
-    cartCountEl.textContent = totalCount;
-    cartTotalEl.textContent = fmt(totalPrice);
-    if(cart.length === 0){
-      cartItemsEl.innerHTML = `<div class="cart-empty">Sepetiniz henüz boş.<br>Ürün eklemek için "Sepete Ekle" butonunu kullanın.</div>`;
-      return;
-    }
-    cartItemsEl.innerHTML = cart.map(i=>`
-      <div class="cart-row">
-        <div class="thumb" style="background:${i.grad};">
-          <i data-lucide="${i.icon}" style="width:20px;height:20px;color:rgba(255,255,255,.6);"></i>
-        </div>
-        <div class="info">
-          <div class="name">${i.name}</div>
-          <div class="meta">${i.qty} adet · ${fmt(i.price)}</div>
-        </div>
-        <button class="remove" data-id="${i.id}"><i data-lucide="x" style="width:15px;height:15px;"></i></button>
-      </div>`).join('');
-    lucide.createIcons();
-    cartItemsEl.querySelectorAll('.remove').forEach(btn=>{
-      btn.addEventListener('click', ()=> removeFromCart(Number(btn.dataset.id)));
-    });
-  }
-
-  cartToggle.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    cartPanel.classList.toggle('open');
-  });
-  document.addEventListener('click', (e)=>{
-    if(!cartPanel.contains(e.target) && !cartToggle.contains(e.target)){
-      cartPanel.classList.remove('open');
-    }
-  });
-
-  renderCart();
+  GD.initHeaderCart();
 </script>
 </body>
 </html>

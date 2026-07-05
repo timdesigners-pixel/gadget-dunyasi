@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ödeme | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <div><a href="#">Satış Ortağı Ol</a><a href="#">Yardım</a></div>
+    <div><a href="#">Uygulamayı İndir</a><a href="#">Siparişi Takip Et</a></div>
+  </div>
+</div>
+
+<header class="main">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo">
+      <span class="mark">G</span>
+      <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+    </a>
+    <div class="deliver">
+      <i data-lucide="shield-check" style="width:16px;height:16px;color:var(--muted);margin-top:2px;"></i>
+      <div>Güvenli Ödeme<strong>256-bit SSL Şifreleme</strong></div>
+    </div>
+    <div style="flex:1;"></div>
+    <div class="header-actions">
+      <div class="cart-wrap">
+        <div class="cart" id="cartToggle">
+          <i data-lucide="shopping-cart" style="width:24px;height:24px;"></i>
+          <span class="count" id="cartCount">0</span>
+          <span class="label">Sepet</span>
+        </div>
+        <div class="cart-panel" id="cartPanel">
+          <h4>Sepetim</h4>
+          <div class="cart-items" id="cartItems"><div class="cart-empty">Sepetiniz henüz boş.</div></div>
+          <div class="cart-footer">
+            <div class="cart-total"><span>Toplam</span><span id="cartTotal">0 TL</span></div>
+            <button class="btn-orange" id="cartGoBtn" style="width:100%;justify-content:center;">Sepete Git</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap page-header">
+  <div class="breadcrumb">
+    <a href="index.html">Ana Sayfa</a><span class="sep">/</span>
+    <a href="cart.html">Sepetim</a><span class="sep">/</span><span>Ödeme</span>
+  </div>
+  <h1 class="page-title">Siparişi Tamamla</h1>
+</div>
+
+<div class="wrap">
+  <div id="checkoutEmptyState" class="empty-state" style="display:none;margin-bottom:40px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.5 3h2l2.6 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 8H6"/></svg>
+    <div>Ödemeye geçmek için sepetinizde ürün olmalı. <a href="products.html" style="color:var(--orange-2);font-weight:700;">Alışverişe başlayın</a></div>
+  </div>
+
+  <form id="checkoutForm" class="checkout-grid" style="display:none;" novalidate>
+    <div>
+      <div class="checkout-card">
+        <h3><span data-lucide="truck"></span> Teslimat Adresi</h3>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="fullName">Ad Soyad</label>
+            <input type="text" id="fullName" name="fullName" autocomplete="name">
+            <div class="err-msg" id="err-fullName"></div>
+          </div>
+          <div class="form-field">
+            <label for="email">E-posta</label>
+            <input type="email" id="email" name="email" autocomplete="email">
+            <div class="err-msg" id="err-email"></div>
+          </div>
+          <div class="form-field">
+            <label for="phone">Telefon</label>
+            <input type="tel" id="phone" name="phone" placeholder="05XX XXX XX XX" autocomplete="tel">
+            <div class="err-msg" id="err-phone"></div>
+          </div>
+          <div class="form-field full">
+            <label for="address">Adres</label>
+            <input type="text" id="address" name="address" placeholder="Mahalle, sokak, no" autocomplete="street-address">
+            <div class="err-msg" id="err-address"></div>
+          </div>
+          <div class="form-field">
+            <label for="city">Şehir</label>
+            <input type="text" id="city" name="city" autocomplete="address-level2">
+            <div class="err-msg" id="err-city"></div>
+          </div>
+          <div class="form-field">
+            <label for="zip">Posta Kodu</label>
+            <input type="text" id="zip" name="zip" autocomplete="postal-code">
+            <div class="err-msg" id="err-zip"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-card">
+        <h3><span data-lucide="credit-card"></span> Ödeme Yöntemi</h3>
+        <div class="pay-options">
+          <label class="pay-option active" id="payOptCard">
+            <input type="radio" name="payMethod" value="card" checked>
+            <span data-lucide="credit-card"></span>
+            <div><div class="label">Kredi / Banka Kartı</div><div class="sub">Visa, Mastercard, Troy</div></div>
+          </label>
+          <label class="pay-option" id="payOptCash">
+            <input type="radio" name="payMethod" value="cash">
+            <span data-lucide="banknote"></span>
+            <div><div class="label">Kapıda Ödeme</div><div class="sub">Nakit veya kartla teslimatta öde</div></div>
+          </label>
+        </div>
+        <div class="card-fields show" id="cardFields">
+          <div class="form-grid">
+            <div class="form-field full">
+              <label for="cardName">Kart Üzerindeki İsim</label>
+              <input type="text" id="cardName" name="cardName" autocomplete="cc-name">
+              <div class="err-msg" id="err-cardName"></div>
+            </div>
+            <div class="form-field full">
+              <label for="cardNumber">Kart Numarası</label>
+              <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+              <div class="err-msg" id="err-cardNumber"></div>
+            </div>
+            <div class="form-field">
+              <label for="cardExpiry">Son Kullanma (AA/YY)</label>
+              <input type="text" id="cardExpiry" name="cardExpiry" placeholder="AA/YY" maxlength="5" autocomplete="cc-exp">
+              <div class="err-msg" id="err-cardExpiry"></div>
+            </div>
+            <div class="form-field">
+              <label for="cardCvv">CVV</label>
+              <input type="text" id="cardCvv" name="cardCvv" placeholder="123" maxlength="4" autocomplete="cc-csc">
+              <div class="err-msg" id="err-cardCvv"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="summary-card">
+        <h3>Sipariş Özeti</h3>
+        <div class="order-summary-mini" id="orderSummaryMini"></div>
+        <div class="summary-row"><span>Ara Toplam</span><span id="ckSubtotal">0 TL</span></div>
+        <div class="summary-row discount" id="ckDiscountRow" style="display:none;"><span>İndirim</span><span id="ckDiscount">0 TL</span></div>
+        <div class="summary-row"><span>Kargo</span><span id="ckShipping">0 TL</span></div>
+        <div class="summary-row total"><span>Toplam</span><span id="ckTotal">0 TL</span></div>
+        <button type="submit" class="btn-orange" style="width:100%;justify-content:center;margin-top:16px;">
+          Siparişi Onayla <span data-lucide="check" style="width:15px;height:15px;"></span>
+        </button>
+        <div class="trust-row"><span data-lucide="lock"></span> Bilgileriniz güvenle işlenir</div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<footer style="margin-top:40px;">
+  <div class="wrap footer-bottom" style="border-top:none;margin-top:0;">
+    <span>&copy; 2026 gadgetdünyası. Tüm hakları saklıdır.</span>
+    <span>Gizlilik Politikası &nbsp;·&nbsp; Kullanım Şartları</span>
+  </div>
+</footer>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script>
+  lucide.createIcons();
+
+  const FREE_SHIPPING_THRESHOLD = 150;
+  const SHIPPING_FEE = 49.90;
+
+  const cart = GD.getCart();
+  const checkoutForm = document.getElementById('checkoutForm');
+  const checkoutEmptyState = document.getElementById('checkoutEmptyState');
+
+  if(cart.length === 0){
+    checkoutEmptyState.style.display = 'block';
+  } else {
+    checkoutForm.style.display = 'grid';
+
+    const subtotal = GD.cartSubtotal(cart);
+    const discount = GD.couponDiscount(subtotal);
+    const afterDiscount = subtotal - discount;
+    const shipping = afterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    const total = afterDiscount + shipping;
+
+    document.getElementById('orderSummaryMini').innerHTML = cart.map(i=>`
+      <div class="mini-line"><span class="name">${i.qty}x ${i.name}</span><span>${GD.fmt(i.qty*i.price)}</span></div>
+    `).join('');
+    document.getElementById('ckSubtotal').textContent = GD.fmt(subtotal);
+    if(discount > 0){
+      document.getElementById('ckDiscountRow').style.display = 'flex';
+      document.getElementById('ckDiscount').textContent = '-' + GD.fmt(discount);
+    }
+    document.getElementById('ckShipping').textContent = shipping === 0 ? 'Ücretsiz' : GD.fmt(shipping);
+    document.getElementById('ckTotal').textContent = GD.fmt(total);
+
+    const session = GD.getSession();
+    if(session){
+      document.getElementById('fullName').value = session.name;
+      document.getElementById('email').value = session.email;
+    }
+
+    // Ödeme yöntemi seçimi
+    const payOptCard = document.getElementById('payOptCard');
+    const payOptCash = document.getElementById('payOptCash');
+    const cardFields = document.getElementById('cardFields');
+    function syncPayMethod(){
+      const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
+      payOptCard.classList.toggle('active', method === 'card');
+      payOptCash.classList.toggle('active', method === 'cash');
+      cardFields.classList.toggle('show', method === 'card');
+    }
+    checkoutForm.querySelectorAll('input[name="payMethod"]').forEach(r => r.addEventListener('change', syncPayMethod));
+    payOptCard.addEventListener('click', ()=>{ payOptCard.querySelector('input').checked = true; syncPayMethod(); });
+    payOptCash.addEventListener('click', ()=>{ payOptCash.querySelector('input').checked = true; syncPayMethod(); });
+
+    document.getElementById('cardNumber').addEventListener('input', (e)=>{
+      let digits = e.target.value.replace(/\D/g,'').slice(0,16);
+      e.target.value = digits.replace(/(.{4})/g,'$1 ').trim();
+    });
+    document.getElementById('cardExpiry').addEventListener('input', (e)=>{
+      let digits = e.target.value.replace(/\D/g,'').slice(0,4);
+      e.target.value = digits.length > 2 ? digits.slice(0,2) + '/' + digits.slice(2) : digits;
+    });
+    document.getElementById('cardCvv').addEventListener('input', (e)=>{
+      e.target.value = e.target.value.replace(/\D/g,'').slice(0,4);
+    });
+
+    function setError(id, msg){
+      document.getElementById('err-' + id).textContent = msg || '';
+      const field = document.getElementById(id);
+      if(field) field.style.borderColor = msg ? '#ff5b6b' : '';
+    }
+
+    function validate(){
+      let ok = true;
+      const val = id => document.getElementById(id).value.trim();
+
+      if(!val('fullName')){ setError('fullName','Ad soyad gerekli.'); ok = false; } else setError('fullName','');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('email'))){ setError('email','Geçerli bir e-posta girin.'); ok = false; } else setError('email','');
+      if(val('phone').replace(/\D/g,'').length < 10){ setError('phone','Geçerli bir telefon numarası girin.'); ok = false; } else setError('phone','');
+      if(!val('address')){ setError('address','Adres gerekli.'); ok = false; } else setError('address','');
+      if(!val('city')){ setError('city','Şehir gerekli.'); ok = false; } else setError('city','');
+      if(!val('zip')){ setError('zip','Posta kodu gerekli.'); ok = false; } else setError('zip','');
+
+      const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
+      if(method === 'card'){
+        if(!val('cardName')){ setError('cardName','Kart üzerindeki isim gerekli.'); ok = false; } else setError('cardName','');
+        if(val('cardNumber').replace(/\s/g,'').length !== 16){ setError('cardNumber','16 haneli kart numarası girin.'); ok = false; } else setError('cardNumber','');
+        if(!/^\d{2}\/\d{2}$/.test(val('cardExpiry'))){ setError('cardExpiry','AA/YY formatında girin.'); ok = false; } else setError('cardExpiry','');
+        if(!/^\d{3,4}$/.test(val('cardCvv'))){ setError('cardCvv','3-4 haneli CVV girin.'); ok = false; } else setError('cardCvv','');
+      }
+      return ok;
+    }
+
+    checkoutForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(!validate()) return;
+
+      const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
+      const currentCart = GD.getCart();
+      const currentSubtotal = GD.cartSubtotal(currentCart);
+      const currentDiscount = GD.couponDiscount(currentSubtotal);
+      const currentAfterDiscount = currentSubtotal - currentDiscount;
+      const currentShipping = currentAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+      const currentTotal = currentAfterDiscount + currentShipping;
+      const coupon = GD.getCoupon();
+
+      const order = GD.createOrder({
+        items: currentCart,
+        subtotal: currentSubtotal,
+        discount: currentDiscount,
+        coupon: coupon ? coupon.code : null,
+        shipping: currentShipping,
+        total: currentTotal,
+        address: {
+          fullName: document.getElementById('fullName').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          address: document.getElementById('address').value.trim(),
+          city: document.getElementById('city').value.trim(),
+          zip: document.getElementById('zip').value.trim()
+        },
+        payment: {
+          method,
+          cardLast4: method === 'card' ? document.getElementById('cardNumber').value.replace(/\s/g,'').slice(-4) : null
+        },
+        status: 'Onaylandı'
+      });
+
+      GD.clearCart();
+      GD.clearCoupon();
+      window.location.href = 'order-success.html?order=' + encodeURIComponent(order.id);
+    });
+  }
+
+  GD.initHeaderCart();
+</script>
+</body>
+</html>

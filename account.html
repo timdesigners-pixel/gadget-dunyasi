@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hesabım | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <div><a href="#">Satış Ortağı Ol</a><a href="#">Yardım</a></div>
+    <div><a href="#">Uygulamayı İndir</a><a href="#">Siparişi Takip Et</a></div>
+  </div>
+</div>
+
+<header class="main">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo">
+      <span class="mark">G</span>
+      <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+    </a>
+
+    <div class="deliver">
+      <i data-lucide="map-pin" style="width:16px;height:16px;color:var(--muted);margin-top:2px;"></i>
+      <div>Teslimat Adresi<strong>İstanbul, 34600</strong></div>
+    </div>
+
+    <form class="search" id="headerSearchForm" action="products.html" method="get">
+      <select name="cat" id="headerCatSelect">
+        <option value="all">Tüm Kategoriler</option>
+        <option value="telefon">Telefon</option>
+        <option value="bilgisayar">Bilgisayar &amp; Tablet</option>
+        <option value="kulaklik">Ses &amp; Kulaklık</option>
+        <option value="oyun">Oyun</option>
+        <option value="aksesuar">Aksesuar</option>
+        <option value="giyilebilir">Giyilebilir</option>
+      </select>
+      <input type="text" name="q" placeholder="Ürün, kategori veya marka ara...">
+      <button type="submit" aria-label="Ara">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1120" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </form>
+
+    <div class="header-actions">
+      <a class="item" href="account.html">Hesabım ve Listeler<strong id="accountLabel">Hesap ve Listeler ▾</strong></a>
+      <a class="item" href="account.html">İadeler<strong>ve Siparişler</strong></a>
+      <div class="cart-wrap">
+        <div class="cart" id="cartToggle">
+          <i data-lucide="shopping-cart" style="width:24px;height:24px;"></i>
+          <span class="count" id="cartCount">0</span>
+          <span class="label">Sepet</span>
+        </div>
+        <div class="cart-panel" id="cartPanel">
+          <h4>Sepetim</h4>
+          <div class="cart-items" id="cartItems"><div class="cart-empty">Sepetiniz henüz boş.</div></div>
+          <div class="cart-footer">
+            <div class="cart-total"><span>Toplam</span><span id="cartTotal">0 TL</span></div>
+            <button class="btn-orange" id="cartGoBtn" style="width:100%;justify-content:center;">Sepete Git</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav">
+  <div class="wrap">
+    <a href="products.html" class="all-menu"><i data-lucide="menu" style="width:16px;height:16px;"></i> Tümü</a>
+    <a href="products.html?badge=bestseller">Çok Satanlar</a>
+    <a href="products.html?badge=sale">Günün Fırsatları</a>
+    <a href="account.html" class="active">Müşteri Hizmetleri</a>
+    <a href="products.html?badge=new">Yeni Çıkanlar</a>
+    <a href="products.html">Hediye Fikirleri</a>
+    <div class="spacer"></div>
+    <a href="products.html?badge=sale" class="deal-link">Prime'a Özel Fırsatlar</a>
+  </div>
+</nav>
+
+<div class="wrap page-header">
+  <div class="breadcrumb">
+    <a href="index.html">Ana Sayfa</a><span class="sep">/</span><span>Hesabım</span>
+  </div>
+  <h1 class="page-title" id="pageTitle">Hesabım</h1>
+</div>
+
+<div class="wrap" id="accountWrap"></div>
+
+<footer style="margin-top:20px;">
+  <div class="wrap footer-bottom" style="border-top:none;margin-top:0;">
+    <span>&copy; 2026 gadgetdünyası. Tüm hakları saklıdır.</span>
+    <span>Gizlilik Politikası &nbsp;·&nbsp; Kullanım Şartları</span>
+  </div>
+</footer>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script>
+  lucide.createIcons();
+
+  const accountWrap = document.getElementById('accountWrap');
+
+  function renderLoggedOut(){
+    accountWrap.innerHTML = `
+      <div class="account-grid">
+        <div>
+          <div class="auth-tabs">
+            <button class="auth-tab-btn active" data-tab="login">Giriş Yap</button>
+            <button class="auth-tab-btn" data-tab="register">Kayıt Ol</button>
+          </div>
+          <div class="auth-card">
+            <div class="auth-note">
+              <span data-lucide="lock" style="width:13px;height:13px;display:inline;vertical-align:-2px;"></span>
+              Bu demo bir hesap sistemidir. Bilgileriniz yalnızca bu tarayıcıda saklanır, gerçek bir sunucuya gönderilmez.
+            </div>
+
+            <form id="loginForm" class="auth-panel active">
+              <div class="form-field full">
+                <label for="loginEmail">E-posta</label>
+                <input type="email" id="loginEmail" autocomplete="email">
+                <div class="err-msg" id="err-loginEmail"></div>
+              </div>
+              <div class="form-field full">
+                <label for="loginPassword">Şifre</label>
+                <input type="password" id="loginPassword" autocomplete="current-password">
+                <div class="err-msg" id="err-loginPassword"></div>
+              </div>
+              <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Giriş Yap</button>
+            </form>
+
+            <form id="registerForm" class="auth-panel">
+              <div class="form-field full">
+                <label for="regName">Ad Soyad</label>
+                <input type="text" id="regName" autocomplete="name">
+                <div class="err-msg" id="err-regName"></div>
+              </div>
+              <div class="form-field full">
+                <label for="regEmail">E-posta</label>
+                <input type="email" id="regEmail" autocomplete="email">
+                <div class="err-msg" id="err-regEmail"></div>
+              </div>
+              <div class="form-field full">
+                <label for="regPassword">Şifre</label>
+                <input type="password" id="regPassword" autocomplete="new-password">
+                <div class="err-msg" id="err-regPassword"></div>
+              </div>
+              <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Hesap Oluştur</button>
+            </form>
+          </div>
+        </div>
+      </div>`;
+
+    accountWrap.querySelectorAll('.auth-tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        accountWrap.querySelectorAll('.auth-tab-btn').forEach(b=>b.classList.remove('active'));
+        accountWrap.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab + 'Form').classList.add('active');
+      });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      document.getElementById('err-loginEmail').textContent = '';
+      document.getElementById('err-loginPassword').textContent = '';
+      if(!email){ document.getElementById('err-loginEmail').textContent = 'E-posta gerekli.'; return; }
+      if(!password){ document.getElementById('err-loginPassword').textContent = 'Şifre gerekli.'; return; }
+      const result = GD.loginUser({ email, password });
+      if(!result.ok){ document.getElementById('err-loginPassword').textContent = result.error; return; }
+      render();
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      ['regName','regEmail','regPassword'].forEach(id => document.getElementById('err-' + id).textContent = '');
+      let ok = true;
+      if(!name){ document.getElementById('err-regName').textContent = 'Ad soyad gerekli.'; ok = false; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ document.getElementById('err-regEmail').textContent = 'Geçerli bir e-posta girin.'; ok = false; }
+      if(password.length < 6){ document.getElementById('err-regPassword').textContent = 'Şifre en az 6 karakter olmalı.'; ok = false; }
+      if(!ok) return;
+      const result = GD.registerUser({ name, email, password });
+      if(!result.ok){ document.getElementById('err-regEmail').textContent = result.error; return; }
+      render();
+    });
+  }
+
+  function renderLoggedIn(session){
+    const initials = session.name.trim().charAt(0).toUpperCase() || '?';
+    accountWrap.innerHTML = `
+      <div class="account-grid logged-in">
+        <div class="account-side">
+          <div class="avatar">${initials}</div>
+          <h4>${session.name}</h4>
+          <div class="email">${session.email}</div>
+          <div class="account-nav">
+            <button class="nav-btn active" data-view="orders"><span data-lucide="inbox"></span> Siparişlerim</button>
+            <button class="nav-btn" data-view="info"><span data-lucide="user"></span> Hesap Bilgileri</button>
+            <button class="nav-btn" id="logoutBtn"><span data-lucide="log-out"></span> Çıkış Yap</button>
+          </div>
+        </div>
+        <div id="accountMain"></div>
+      </div>`;
+    GD.createIconsIn(accountWrap);
+
+    function renderOrders(){
+      const orders = GD.getOrders();
+      const main = document.getElementById('accountMain');
+      if(orders.length === 0){
+        main.innerHTML = `<div class="empty-state">
+          <span data-lucide="inbox" style="width:36px;height:36px;"></span>
+          <div>Henüz siparişiniz yok. <a href="products.html" style="color:var(--orange-2);font-weight:700;">Alışverişe başlayın</a></div>
+        </div>`;
+        GD.createIconsIn(main);
+        return;
+      }
+      main.innerHTML = `<div class="orders-list">${orders.map(o=>{
+        const dateStr = new Date(o.date).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
+        return `
+        <div class="order-card">
+          <div class="order-top">
+            <div><div class="order-id">${o.id}</div><div class="order-date">${dateStr}</div></div>
+            <div class="order-status">${o.status || 'Onaylandı'}</div>
+          </div>
+          <div class="order-items">${o.items.map(i=>`${i.qty}x ${i.name}`).join(', ')}</div>
+          <div class="order-total">${GD.fmt(o.total)}</div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderInfo(){
+      document.getElementById('accountMain').innerHTML = `
+        <div class="checkout-card" style="margin-bottom:0;">
+          <h3><span data-lucide="user"></span> Hesap Bilgileri</h3>
+          <div class="form-field"><label>Ad Soyad</label><input type="text" value="${session.name}" disabled></div>
+          <div class="form-field"><label>E-posta</label><input type="email" value="${session.email}" disabled></div>
+          <div class="auth-note" style="margin-top:10px;">Bu bilgiler demo amaçlıdır ve yalnızca tarayıcınızda saklanır.</div>
+        </div>`;
+      GD.createIconsIn(document.getElementById('accountMain'));
+    }
+
+    accountWrap.querySelectorAll('.nav-btn[data-view]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        accountWrap.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        if(btn.dataset.view === 'orders') renderOrders(); else renderInfo();
+      });
+    });
+    document.getElementById('logoutBtn').addEventListener('click', ()=>{
+      GD.logout();
+      render();
+    });
+
+    renderOrders();
+  }
+
+  function render(){
+    const session = GD.getSession();
+    if(session) renderLoggedIn(session);
+    else renderLoggedOut();
+  }
+
+  render();
+  GD.initHeaderCart();
+</script>
+</body>
+</html>
