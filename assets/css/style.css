@@ -353,7 +353,7 @@ footer a:hover{color:var(--orange-2);}
 }
 
 /* ---------- Page header (breadcrumb / title) ---------- */
-.page-header{padding:26px 0 6px;}
+.page-header{padding-top:26px;padding-bottom:6px;}
 .breadcrumb{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
 .breadcrumb a:hover{color:var(--orange-2);}
 .breadcrumb .sep{opacity:.5;}
