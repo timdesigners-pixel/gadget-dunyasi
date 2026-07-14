@@ -8,9 +8,9 @@
 window.GD = window.GD || {};
 
 (function(){
-  // _v2: gerçek gadget kataloğu eklendi; eski önbelleklenmiş seed'i geçersiz kılar
-  const CATS_KEY = 'gd_categories_v2';
-  const PRODUCTS_KEY = 'gd_products_v2';
+  // _v3: katalog 100+ gerçek ürüne genişletildi; eski önbelleklenmiş seed'i geçersiz kılar
+  const CATS_KEY = 'gd_categories_v3';
+  const PRODUCTS_KEY = 'gd_products_v3';
   const TAGS_KEY = 'gd_tags';
 
   function ensureSeeded(key, seedFn){
