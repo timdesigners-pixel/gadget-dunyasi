@@ -150,7 +150,7 @@
     <div class="set-detail-card">
       ${s.featured ? '<span class="set-badge-featured">Öne Çıkan</span>' : ''}
       <div class="set-hero-thumbs">
-        ${s.thumbs.map(t=>`<div class="th">${GD.mediaImgTag(t.icon, t.grad, s.name, {size:220, iconRatio:.5})}</div>`).join('')}
+        ${s.thumbs.map(t=>`<div class="th">${GD.mediaImgTag(t.icon, t.grad, s.name, {size:220, iconRatio:.5, img:t.img})}</div>`).join('')}
       </div>
       <div>
         <div class="set-name" style="font-size:16px;">${GD.escapeHtml(s.name)}</div>

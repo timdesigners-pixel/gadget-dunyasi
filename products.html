@@ -236,7 +236,7 @@
           <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
           ${GD.renderBadge(p.badge)}
           <div class="product-fav"><span data-lucide="heart"></span></div>
-          ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
+          ${GD.productImgTag(p, {size:400})}
         </div>
         <div class="product-body">
           <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>

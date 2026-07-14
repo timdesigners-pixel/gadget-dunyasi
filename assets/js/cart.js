@@ -18,7 +18,7 @@ window.GD = window.GD || {};
     const cart = getCart();
     const existing = cart.find(i => String(i.id) === String(item.id));
     if(existing){ existing.qty += qty; }
-    else { cart.push({ id:item.id, name:item.name, price:item.price, icon:item.icon, grad:item.grad, qty }); }
+    else { cart.push({ id:item.id, name:item.name, price:item.price, icon:item.icon, grad:item.grad, img:item.img, qty }); }
     saveCart(cart);
     return cart;
   }
@@ -88,7 +88,7 @@ window.GD = window.GD || {};
     }
     cartItemsEl.innerHTML = cart.map(i => `
       <div class="cart-row">
-        <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:120})}</div>
+        <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:120, img:i.img})}</div>
         <div class="info">
           <div class="name">${i.name}</div>
           <div class="meta">${i.qty} adet · ${GD.fmt(i.price)}</div>

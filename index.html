@@ -389,7 +389,7 @@
         </button>
       </div>
       <div class="set-hero-thumbs">
-        ${s.thumbs.map(t=>`<div class="th">${GD.mediaImgTag(t.icon, t.grad, s.name, {size:200, iconRatio:.5})}</div>`).join('')}
+        ${s.thumbs.map(t=>`<div class="th">${GD.mediaImgTag(t.icon, t.grad, s.name, {size:200, iconRatio:.5, img:t.img})}</div>`).join('')}
       </div>
       <div class="set-price">
         <span class="now">${GD.fmt(s.price)}</span>
@@ -453,7 +453,7 @@
           <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
           ${GD.renderBadge(p.badge)}
           <div class="product-fav"><span data-lucide="heart"></span></div>
-          ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
+          ${GD.productImgTag(p, {size:400})}
         </div>
         <div class="product-body">
           <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>

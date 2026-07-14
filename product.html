@@ -254,15 +254,31 @@
     const galleryMainImg = document.getElementById('galleryMainImg');
     const galleryThumbs = document.getElementById('galleryThumbs');
 
+    // Gerçek fotoğraf varsa onu, yoksa gradyan placeholder'ı kullan
+    const slideSrc = (slide, size, ratio) =>
+      slide.img || GD.mediaSvgDataUri(slide.icon, slide.grad, { size, iconRatio: ratio });
+
     galleryThumbs.innerHTML = galleryImages.map((slide,i)=>`
       <button class="gallery-thumb${i===0?' active':''}" data-i="${i}" aria-label="Görsel ${i+1}">
-        <img src="${GD.mediaSvgDataUri(slide.icon, slide.grad, {size:150, iconRatio:0.42})}" alt="${product.name} - görsel ${i+1}" loading="lazy" decoding="async">
+        <img src="${slideSrc(slide, 150, 0.42)}" alt="${product.name} - görsel ${i+1}" loading="lazy" decoding="async">
       </button>`).join('');
+
+    // Tek görselli ürünlerde gezinme oklarını ve şeridi gizle
+    if(galleryImages.length < 2){
+      document.getElementById('galleryPrev').style.display = 'none';
+      document.getElementById('galleryNext').style.display = 'none';
+      galleryThumbs.style.display = 'none';
+    }
+
+    galleryMainImg.addEventListener('error', ()=>{
+      const slide = galleryImages[galleryIndex];
+      if(slide.icon) galleryMainImg.src = GD.mediaSvgDataUri(slide.icon, slide.grad, { size:600, iconRatio:0.4 });
+    });
 
     function showGallerySlide(i){
       galleryIndex = (i + galleryImages.length) % galleryImages.length;
       const slide = galleryImages[galleryIndex];
-      galleryMainImg.src = GD.mediaSvgDataUri(slide.icon, slide.grad, { size:600, iconRatio:0.4 });
+      galleryMainImg.src = slideSrc(slide, 600, 0.4);
       galleryThumbs.querySelectorAll('.gallery-thumb').forEach((t,ti)=>t.classList.toggle('active', ti===galleryIndex));
     }
     showGallerySlide(0);
@@ -287,7 +303,7 @@
     }
     function updateLightbox(){
       const slide = galleryImages[galleryIndex];
-      lightboxImg.src = GD.mediaSvgDataUri(slide.icon, slide.grad, { size:900, iconRatio:0.38 });
+      lightboxImg.src = slideSrc(slide, 900, 0.38);
       lightboxCounter.textContent = `${galleryIndex+1} / ${galleryImages.length}`;
       galleryThumbs.querySelectorAll('.gallery-thumb').forEach((t,ti)=>t.classList.toggle('active', ti===galleryIndex));
     }
@@ -337,7 +353,7 @@
           <div class="product-media">
             <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
             ${GD.renderBadge(p.badge)}
-            ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
+            ${GD.productImgTag(p, {size:400})}
           </div>
           <div class="product-body">
             <div class="product-cat">${GD.getCategoryLabel(p.cat)}</div>

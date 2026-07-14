@@ -195,7 +195,7 @@
 
     cartLines.innerHTML = cart.map(i => `
       <div class="cart-line" data-id="${i.id}">
-        <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:150})}</div>
+        <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:150, img:i.img})}</div>
         <div class="info">
           <div class="name">${i.name}</div>
           <div class="unit">${GD.fmt(i.price)} / adet</div>

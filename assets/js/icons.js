@@ -122,5 +122,16 @@ GD.mediaImgTag = function(icon, gradStr, alt, opts){
   const cls = opts.class ? ` class="${opts.class}"` : '';
   const style = opts.style ? ` style="${opts.style}"` : '';
   const uri = GD.mediaSvgDataUri(icon, gradStr, opts);
+  // opts.img: gerçek ürün fotoğrafı URL'i. Yüklenemezse (ağ yok / dosya
+  // taşındı) ikon+gradyan placeholder'a otomatik geri düşer.
+  if(opts.img){
+    return `<img src="${GD.escapeHtml(opts.img)}" alt="${GD.escapeHtml(alt)}" loading="${loading}" decoding="async"` +
+      ` onerror="this.onerror=null;this.src='${uri}'"${cls}${style}>`;
+  }
   return `<img src="${uri}" alt="${GD.escapeHtml(alt)}" loading="${loading}" decoding="async"${cls}${style}>`;
+};
+
+/* Ürün nesnesinden (varsa gerçek fotoğrafıyla) <img> üretir */
+GD.productImgTag = function(p, opts){
+  return GD.mediaImgTag(p.icon, p.grad, p.name, Object.assign({ img: p.img }, opts || {}));
 };
