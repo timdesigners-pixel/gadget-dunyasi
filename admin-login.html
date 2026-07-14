@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yönetici Girişi | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="main">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo">
+      <span class="mark">G</span>
+      <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+    </a>
+    <span class="admin-badge">Yönetici Girişi</span>
+    <div style="flex:1;"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="account-grid" style="margin-top:40px;">
+    <div class="auth-card">
+
+      <div class="auth-step active" id="stepCredentials">
+        <h1 class="page-title" style="font-size:20px;margin-bottom:6px;">Yönetim Paneli</h1>
+        <p class="page-sub" style="margin-bottom:16px;">Bu alan yalnızca gadgetdünyası yöneticileri içindir.</p>
+
+        <div class="auth-note">
+          <span data-lucide="lock" style="width:13px;height:13px;display:inline;vertical-align:-2px;"></span>
+          Demo hesabı: <b>admin@gadgetdunyasi.com</b> / <b>admin123</b> — gerçek bir yönetim sunucusuna bağlı değildir.
+        </div>
+
+        <form id="adminLoginForm">
+          <div class="form-field full">
+            <label for="adminEmail">Yönetici E-postası</label>
+            <input type="email" id="adminEmail" autocomplete="username">
+            <div class="err-msg" id="err-adminEmail"></div>
+          </div>
+          <div class="form-field full">
+            <label for="adminPassword">Şifre</label>
+            <input type="password" id="adminPassword" autocomplete="current-password">
+            <div class="err-msg" id="err-adminPassword"></div>
+          </div>
+          <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Giriş Yap</button>
+        </form>
+        <div class="auth-switch"><a href="index.html">← Mağazaya dön</a></div>
+      </div>
+
+      <div class="auth-step" id="stepOtp">
+        <button type="button" class="auth-back" id="otpBack">
+          <span data-lucide="arrow-left" style="width:14px;height:14px;"></span> Geri
+        </button>
+        <h1 class="page-title" style="font-size:20px;margin-bottom:6px;">2 Adımlı Doğrulama</h1>
+        <p class="page-sub" style="margin-bottom:18px;">Yönetici hesabının güvenliği için 6 haneli kodu girin.</p>
+
+        <div class="otp-hint">
+          Demo modu: gerçek bir SMS/e-posta gönderilmez. Doğrulama kodunuz: <b>123456</b>
+        </div>
+
+        <form id="otpForm">
+          <div class="otp-row">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+            <input type="text" inputmode="numeric" maxlength="1" class="otp-digit">
+          </div>
+          <div class="err-msg" id="err-otp" style="text-align:center;margin-bottom:10px;"></div>
+          <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Doğrula ve Panele Gir</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer style="margin-top:20px;">
+  <div class="wrap footer-bottom" style="border-top:none;margin-top:0;">
+    <span>&copy; 2026 gadgetdünyası. Tüm hakları saklıdır.</span>
+  </div>
+</footer>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script>
+  lucide.createIcons();
+
+  const stepCredentials = document.getElementById('stepCredentials');
+  const stepOtp = document.getElementById('stepOtp');
+
+  function goToStep(step){
+    stepCredentials.classList.toggle('active', step === 'credentials');
+    stepOtp.classList.toggle('active', step === 'otp');
+    if(step === 'otp'){
+      document.querySelectorAll('.otp-digit').forEach(inp => inp.value = '');
+      document.getElementById('err-otp').textContent = '';
+      document.querySelector('.otp-digit').focus();
+    }
+  }
+
+  document.getElementById('adminLoginForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    document.getElementById('err-adminEmail').textContent = '';
+    document.getElementById('err-adminPassword').textContent = '';
+    if(!email){ document.getElementById('err-adminEmail').textContent = 'E-posta gerekli.'; return; }
+    if(!password){ document.getElementById('err-adminPassword').textContent = 'Şifre gerekli.'; return; }
+    if(!GD.checkAdminCredentials({ email, password })){
+      document.getElementById('err-adminPassword').textContent = 'E-posta veya şifre hatalı.';
+      return;
+    }
+    goToStep('otp');
+  });
+
+  document.getElementById('otpBack').addEventListener('click', ()=> goToStep('credentials'));
+
+  const otpDigits = Array.from(document.querySelectorAll('.otp-digit'));
+  otpDigits.forEach((inp, i)=>{
+    inp.addEventListener('input', ()=>{
+      inp.value = inp.value.replace(/\D/g,'').slice(0,1);
+      if(inp.value && otpDigits[i+1]) otpDigits[i+1].focus();
+    });
+    inp.addEventListener('keydown', (e)=>{
+      if(e.key === 'Backspace' && !inp.value && otpDigits[i-1]) otpDigits[i-1].focus();
+    });
+  });
+
+  document.getElementById('otpForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const code = otpDigits.map(i=>i.value).join('');
+    if(code.length < 6){ document.getElementById('err-otp').textContent = '6 haneli kodu girin.'; return; }
+    if(code !== GD.DEMO_2FA_CODE){
+      document.getElementById('err-otp').textContent = 'Kod hatalı. Tekrar deneyin.';
+      otpDigits.forEach(i=>i.value='');
+      otpDigits[0].focus();
+      return;
+    }
+    GD.setAdminSession();
+    window.location.href = 'admin.html';
+  });
+</script>
+</body>
+</html>

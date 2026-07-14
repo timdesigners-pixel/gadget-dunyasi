@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirala-Al | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <div><a href="#">Satış Ortağı Ol</a><a href="#">Yardım</a></div>
+    <div><a href="#">Uygulamayı İndir</a><a href="#">Siparişi Takip Et</a></div>
+  </div>
+</div>
+
+<header class="main">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo">
+      <span class="mark">G</span>
+      <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+    </a>
+
+    <div class="deliver">
+      <i data-lucide="map-pin" style="width:16px;height:16px;color:var(--muted);margin-top:2px;"></i>
+      <div>Teslimat Adresi<strong>İstanbul, 34600</strong></div>
+    </div>
+
+    <form class="search" id="headerSearchForm" action="products.html" method="get">
+      <select name="cat" id="headerCatSelect">
+        <option value="all">Tüm Kategoriler</option>
+        <option value="telefon">Telefon</option>
+        <option value="bilgisayar">Bilgisayar &amp; Tablet</option>
+        <option value="kulaklik">Ses &amp; Kulaklık</option>
+        <option value="oyun">Oyun</option>
+        <option value="aksesuar">Aksesuar</option>
+        <option value="giyilebilir">Giyilebilir</option>
+      </select>
+      <input type="text" name="q" placeholder="Ürün, kategori veya marka ara...">
+      <button type="submit" aria-label="Ara">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1120" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </form>
+
+    <div class="header-actions">
+      <a class="item" href="account.html">Hesabım ve Listeler<strong id="accountLabel">Hesap ve Listeler ▾</strong></a>
+      <a class="item" href="account.html">İadeler<strong>ve Siparişler</strong></a>
+      <div class="cart-wrap">
+        <div class="cart" id="cartToggle">
+          <i data-lucide="shopping-cart" style="width:24px;height:24px;"></i>
+          <span class="count" id="cartCount">0</span>
+          <span class="label">Sepet</span>
+        </div>
+        <div class="cart-panel" id="cartPanel">
+          <h4>Sepetim</h4>
+          <div class="cart-items" id="cartItems"><div class="cart-empty">Sepetiniz henüz boş.</div></div>
+          <div class="cart-footer">
+            <div class="cart-total"><span>Toplam</span><span id="cartTotal">0 TL</span></div>
+            <button class="btn-orange" id="cartGoBtn" style="width:100%;justify-content:center;">Sepete Git</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav">
+  <div class="wrap">
+    <a href="products.html" class="all-menu"><i data-lucide="menu" style="width:16px;height:16px;"></i> Tümü</a>
+    <a href="sets.html">Öne Çıkan Setler</a>
+    <a href="rent-to-own.html" class="active">Kirala-Al</a>
+    <a href="products.html?badge=bestseller">Çok Satanlar</a>
+    <a href="products.html?badge=sale">Günün Fırsatları</a>
+    <a href="reviews.html">İncelemeler</a>
+    <a href="account.html">Müşteri Hizmetleri</a>
+    <a href="products.html?badge=new">Yeni Çıkanlar</a>
+    <a href="products.html">Hediye Fikirleri</a>
+    <div class="spacer"></div>
+    <a href="products.html?badge=sale" class="deal-link">Prime'a Özel Fırsatlar</a>
+  </div>
+</nav>
+
+<div class="wrap" style="padding-top:6px;">
+  <div class="breadcrumb" style="padding-top:20px;">
+    <a href="index.html">Ana Sayfa</a><span class="sep">/</span><span>Kirala-Al</span>
+  </div>
+
+  <div class="rto-hero">
+    <div class="eyebrow">Yeni Nesil Sahiplenme</div>
+    <h1>Kiralayarak Sahip Ol, Bütçeni Zorlamadan Teknolojiye Ulaş.</h1>
+    <p>Kirala-Al ile beğendiğin telefonu, dizüstü bilgisayarı ya da akıllı ev ürününü peşin ödemeden aylık taksitlerle kirala; seçtiğin plan sonunda hiçbir ek ücret ödemeden kalıcı olarak sahibi ol. Kredi kartına ihtiyaç yok, uzun vadeli taahhüt yok.</p>
+    <a href="products.html" class="btn-orange">Uygun Ürünleri Keşfet <span data-lucide="arrow-right" style="width:15px;height:15px;"></span></a>
+  </div>
+
+  <h2 style="font-size:21px;font-weight:800;margin:0 0 18px;">Nasıl Çalışır?</h2>
+  <div class="rto-steps">
+    <div class="rto-step">
+      <div class="num">1</div>
+      <h4>Ürününü Seç</h4>
+      <p>Kirala-Al rozeti bulunan binlerce ürün arasından ihtiyacına uygun olanı seç: telefon, dizüstü bilgisayar, akıllı ev cihazı ve daha fazlası.</p>
+    </div>
+    <div class="rto-step">
+      <div class="num">2</div>
+      <h4>Planını Belirle</h4>
+      <p>12, 24 veya 36 aylık plan seçeneklerinden bütçene en uygun olanı seç. Aylık ödeme tutarını satın alma öncesinde net olarak gör.</p>
+    </div>
+    <div class="rto-step">
+      <div class="num">3</div>
+      <h4>Hemen Kullanmaya Başla</h4>
+      <p>Onay sonrası ürünün 24 saat içinde kapına teslim edilir. Kiralama süresi boyunca garanti ve teknik destek bizden.</p>
+    </div>
+    <div class="rto-step">
+      <div class="num">4</div>
+      <h4>Süre Sonunda Sahibi Ol</h4>
+      <p>Plan süresi tamamlandığında ürün otomatik olarak senin olur - ek bir ödeme ya da işlem yapmana gerek kalmaz.</p>
+    </div>
+  </div>
+
+  <h2 style="font-size:21px;font-weight:800;margin:0 0 18px;">Plan Seçenekleri</h2>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>12 Aylık Plan</h3>
+      <div class="plan-desc">Kısa süreli, düşük taahhüt</div>
+      <div class="price">449 TL<span>/ay'dan başlayan</span></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Peşinat yok</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 12. ayda ürün sana kalır</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> İstediğin zaman erken bitirme hakkı</li>
+      </ul>
+      <a href="products.html" class="btn-ghost" style="width:100%;justify-content:center;">Bu Planı Seç</a>
+    </div>
+    <div class="pricing-card popular">
+      <div class="popular-tag">En Popüler</div>
+      <h3>24 Aylık Plan</h3>
+      <div class="plan-desc">Aylık ödeme ile denge</div>
+      <div class="price">279 TL<span>/ay'dan başlayan</span></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Peşinat yok</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ücretsiz teknik destek ve garanti</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 12. ayda ücretsiz ürün yükseltme hakkı</li>
+      </ul>
+      <a href="products.html" class="btn-orange" style="width:100%;justify-content:center;">Bu Planı Seç</a>
+    </div>
+    <div class="pricing-card">
+      <h3>36 Aylık Plan</h3>
+      <div class="plan-desc">En düşük aylık ödeme</div>
+      <div class="price">199 TL<span>/ay'dan başlayan</span></div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Peşinat yok</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> En uzun vadeli, en düşük taksit</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Kaza ve hasar sigortası dahil</li>
+      </ul>
+      <a href="products.html" class="btn-ghost" style="width:100%;justify-content:center;">Bu Planı Seç</a>
+    </div>
+  </div>
+  <p style="font-size:11.5px;color:var(--muted);margin-top:-24px;margin-bottom:44px;">
+    * Belirtilen tutarlar örnek ürün fiyatlarına göre hesaplanan başlangıç fiyatlarıdır; nihai aylık tutar seçtiğin ürüne ve plana göre değişir.
+  </p>
+
+  <h2 style="font-size:21px;font-weight:800;margin:0 0 18px;">Sıkça Sorulan Sorular</h2>
+  <div class="faq-list" id="faqList">
+    <div class="faq-item">
+      <button class="faq-q">Kirala-Al ile normal taksitli satış arasındaki fark nedir? <span data-lucide="chevron-right"></span></button>
+      <div class="faq-a"><p>Taksitli satışta ürünü baştan satın almış olursun ve tüm tutara kredi/faiz maliyeti dahildir. Kirala-Al'da ise ürünü plan süresi boyunca kiralarsın; süre sonunda otomatik olarak sahibi olursun, aradaki dönemde ürün bir arıza yaşarsa değişim ve teknik destek bizim sorumluluğumuzdadır.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Kredi kartı olmadan başvurabilir miyim? <span data-lucide="chevron-right"></span></button>
+      <div class="faq-a"><p>Evet. Kirala-Al başvurusu için kredi kartına ihtiyaç yoktur; kimlik doğrulama ve gelir beyanı ile başvurunu tamamlayabilirsin.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Plan süresi bitmeden vazgeçebilir miyim? <span data-lucide="chevron-right"></span></button>
+      <div class="faq-a"><p>Evet, 12 ve 24 aylık planlarda istediğin an erken sonlandırma hakkın var. Kalan bakiyeyi ödeyerek ürünün sahibi olabilir ya da ürünü iade ederek kiralamayı sonlandırabilirsin.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Ürün arızalanırsa ne olur? <span data-lucide="chevron-right"></span></button>
+      <div class="faq-a"><p>Kiralama süresi boyunca tüm ürünler resmi garanti kapsamındadır. Kullanıcı hatası dışındaki arızalarda ürün ücretsiz onarılır ya da değiştirilir.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Hangi ürünler Kirala-Al kapsamında? <span data-lucide="chevron-right"></span></button>
+      <div class="faq-a"><p>Telefon, dizüstü bilgisayar, tablet ve akıllı ev kategorilerindeki seçili ürünler Kirala-Al ile satın alınabilir. Ürün sayfasında "Kirala-Al" rozetini görebilirsin.</p></div>
+    </div>
+  </div>
+
+  <div class="rto-hero" style="margin-top:40px;text-align:center;">
+    <div class="eyebrow" style="justify-content:center;">Hemen Başla</div>
+    <h1 style="max-width:none;">Bugün Seç, Yarın Kullanmaya Başla.</h1>
+    <p style="max-width:none;margin-left:auto;margin-right:auto;">Binlerce ürün arasından seçim yap, planını belirle, teknolojiye peşin ödemeden kavuş.</p>
+    <a href="products.html" class="btn-orange" style="margin:0 auto;">Ürünlere Göz At <span data-lucide="arrow-right" style="width:15px;height:15px;"></span></a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <h5>Hakkımızda</h5>
+      <p style="max-width:280px;">Gadget Dünyası en son teknoloji ürünlerini, uygun fiyat garantisi ve hızlı teslimatla sizlere sunar. 2018'den beri milyonlarca müşteriye hizmet veriyoruz.</p>
+    </div>
+    <div>
+      <h5>Müşteri Hizmetleri</h5>
+      <a href="#">İletişim</a>
+      <a href="account.html">Sipariş Takibi</a>
+      <a href="#">İade &amp; Değişim</a>
+      <a href="#">Sıkça Sorulan Sorular</a>
+      <a href="reviews.html">Müşteri Yorumları</a>
+    </div>
+    <div>
+      <h5>Kategoriler</h5>
+      <a href="products.html?cat=telefon">Telefon</a>
+      <a href="products.html?cat=bilgisayar">Bilgisayar &amp; Tablet</a>
+      <a href="products.html?cat=kulaklik">Ses &amp; Kulaklık</a>
+      <a href="products.html?cat=oyun">Oyun</a>
+      <a href="sets.html">Öne Çıkan Setler</a>
+      <a href="rent-to-own.html">Kirala-Al</a>
+    </div>
+    <div>
+      <h5>Sosyal Medya &amp; Bülten</h5>
+      <div class="social-icons">
+        <span><i data-lucide="facebook" style="width:15px;height:15px;"></i></span>
+        <span><i data-lucide="instagram" style="width:15px;height:15px;"></i></span>
+        <span><i data-lucide="twitter" style="width:15px;height:15px;"></i></span>
+        <span><i data-lucide="youtube" style="width:15px;height:15px;"></i></span>
+      </div>
+      <div class="pay-icons">
+        <div>VISA</div><div>MC</div><div>AMEX</div><div>TROY</div><div>GPay</div><div>APay</div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>&copy; 2026 gadgetdünyası. Tüm hakları saklıdır.</span>
+    <span>Gizlilik Politikası &nbsp;·&nbsp; Kullanım Şartları &nbsp;·&nbsp; <a href="admin-login.html" style="color:inherit;">Yönetici Girişi</a></span>
+  </div>
+</footer>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script>
+  lucide.createIcons();
+
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click', ()=>{
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  GD.initHeaderCart();
+</script>
+</body>
+</html>

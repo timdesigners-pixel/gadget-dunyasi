@@ -69,8 +69,11 @@
 <nav class="subnav">
   <div class="wrap">
     <a href="products.html" class="all-menu"><i data-lucide="menu" style="width:16px;height:16px;"></i> Tümü</a>
+    <a href="sets.html">Öne Çıkan Setler</a>
+    <a href="rent-to-own.html">Kirala-Al</a>
     <a href="products.html?badge=bestseller">Çok Satanlar</a>
     <a href="products.html?badge=sale">Günün Fırsatları</a>
+    <a href="reviews.html">İncelemeler</a>
     <a href="account.html" class="active">Müşteri Hizmetleri</a>
     <a href="products.html?badge=new">Yeni Çıkanlar</a>
     <a href="products.html">Hediye Fikirleri</a>
@@ -91,7 +94,7 @@
 <footer style="margin-top:20px;">
   <div class="wrap footer-bottom" style="border-top:none;margin-top:0;">
     <span>&copy; 2026 gadgetdünyası. Tüm hakları saklıdır.</span>
-    <span>Gizlilik Politikası &nbsp;·&nbsp; Kullanım Şartları</span>
+    <span>Gizlilik Politikası &nbsp;·&nbsp; Kullanım Şartları &nbsp;·&nbsp; <a href="admin-login.html" style="color:inherit;">Yönetici Girişi</a></span>
   </div>
 </footer>
 
@@ -106,91 +109,15 @@
 
   function renderLoggedOut(){
     accountWrap.innerHTML = `
-      <div class="account-grid">
-        <div>
-          <div class="auth-tabs">
-            <button class="auth-tab-btn active" data-tab="login">Giriş Yap</button>
-            <button class="auth-tab-btn" data-tab="register">Kayıt Ol</button>
-          </div>
-          <div class="auth-card">
-            <div class="auth-note">
-              <span data-lucide="lock" style="width:13px;height:13px;display:inline;vertical-align:-2px;"></span>
-              Bu demo bir hesap sistemidir. Bilgileriniz yalnızca bu tarayıcıda saklanır, gerçek bir sunucuya gönderilmez.
-            </div>
-
-            <form id="loginForm" class="auth-panel active">
-              <div class="form-field full">
-                <label for="loginEmail">E-posta</label>
-                <input type="email" id="loginEmail" autocomplete="email">
-                <div class="err-msg" id="err-loginEmail"></div>
-              </div>
-              <div class="form-field full">
-                <label for="loginPassword">Şifre</label>
-                <input type="password" id="loginPassword" autocomplete="current-password">
-                <div class="err-msg" id="err-loginPassword"></div>
-              </div>
-              <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Giriş Yap</button>
-            </form>
-
-            <form id="registerForm" class="auth-panel">
-              <div class="form-field full">
-                <label for="regName">Ad Soyad</label>
-                <input type="text" id="regName" autocomplete="name">
-                <div class="err-msg" id="err-regName"></div>
-              </div>
-              <div class="form-field full">
-                <label for="regEmail">E-posta</label>
-                <input type="email" id="regEmail" autocomplete="email">
-                <div class="err-msg" id="err-regEmail"></div>
-              </div>
-              <div class="form-field full">
-                <label for="regPassword">Şifre</label>
-                <input type="password" id="regPassword" autocomplete="new-password">
-                <div class="err-msg" id="err-regPassword"></div>
-              </div>
-              <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Hesap Oluştur</button>
-            </form>
-          </div>
+      <div class="empty-state" style="max-width:440px;margin:30px auto;">
+        <span data-lucide="user" style="width:36px;height:36px;"></span>
+        <div style="margin-bottom:16px;">Siparişlerinizi ve hesap bilgilerinizi görmek için giriş yapın.</div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="login.html" class="btn-orange">Giriş Yap</a>
+          <a href="register.html" class="btn-ghost">Kayıt Ol</a>
         </div>
       </div>`;
-
-    accountWrap.querySelectorAll('.auth-tab-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        accountWrap.querySelectorAll('.auth-tab-btn').forEach(b=>b.classList.remove('active'));
-        accountWrap.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab + 'Form').classList.add('active');
-      });
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      document.getElementById('err-loginEmail').textContent = '';
-      document.getElementById('err-loginPassword').textContent = '';
-      if(!email){ document.getElementById('err-loginEmail').textContent = 'E-posta gerekli.'; return; }
-      if(!password){ document.getElementById('err-loginPassword').textContent = 'Şifre gerekli.'; return; }
-      const result = GD.loginUser({ email, password });
-      if(!result.ok){ document.getElementById('err-loginPassword').textContent = result.error; return; }
-      render();
-    });
-
-    document.getElementById('registerForm').addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const password = document.getElementById('regPassword').value;
-      ['regName','regEmail','regPassword'].forEach(id => document.getElementById('err-' + id).textContent = '');
-      let ok = true;
-      if(!name){ document.getElementById('err-regName').textContent = 'Ad soyad gerekli.'; ok = false; }
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ document.getElementById('err-regEmail').textContent = 'Geçerli bir e-posta girin.'; ok = false; }
-      if(password.length < 6){ document.getElementById('err-regPassword').textContent = 'Şifre en az 6 karakter olmalı.'; ok = false; }
-      if(!ok) return;
-      const result = GD.registerUser({ name, email, password });
-      if(!result.ok){ document.getElementById('err-regEmail').textContent = result.error; return; }
-      render();
-    });
+    GD.createIconsIn(accountWrap);
   }
 
   function renderLoggedIn(session){
@@ -198,9 +125,9 @@
     accountWrap.innerHTML = `
       <div class="account-grid logged-in">
         <div class="account-side">
-          <div class="avatar">${initials}</div>
-          <h4>${session.name}</h4>
-          <div class="email">${session.email}</div>
+          <div class="avatar">${GD.escapeHtml(initials)}</div>
+          <h4>${GD.escapeHtml(session.name)}</h4>
+          <div class="email">${GD.escapeHtml(session.email)}</div>
           <div class="account-nav">
             <button class="nav-btn active" data-view="orders"><span data-lucide="inbox"></span> Siparişlerim</button>
             <button class="nav-btn" data-view="info"><span data-lucide="user"></span> Hesap Bilgileri</button>
@@ -240,8 +167,8 @@
       document.getElementById('accountMain').innerHTML = `
         <div class="checkout-card" style="margin-bottom:0;">
           <h3><span data-lucide="user"></span> Hesap Bilgileri</h3>
-          <div class="form-field"><label>Ad Soyad</label><input type="text" value="${session.name}" disabled></div>
-          <div class="form-field"><label>E-posta</label><input type="email" value="${session.email}" disabled></div>
+          <div class="form-field"><label>Ad Soyad</label><input type="text" value="${GD.escapeHtml(session.name)}" disabled></div>
+          <div class="form-field"><label>E-posta</label><input type="email" value="${GD.escapeHtml(session.email)}" disabled></div>
           <div class="auth-note" style="margin-top:10px;">Bu bilgiler demo amaçlıdır ve yalnızca tarayıcınızda saklanır.</div>
         </div>`;
       GD.createIconsIn(document.getElementById('accountMain'));

@@ -68,16 +68,28 @@ GD.PRODUCTS = [
 
 GD.SETS = [
   { id:'s1', name:'Yeni Anne Setleri', featured:true,  items:5, price:6499,  oldPrice:8299,
+    desc:'Yeni doğan bebeklerin ilk ayları için ihtiyaç duyulan temel elektronik ürünleri bir araya getiren avantajlı paket.',
+    features:['Bebek monitörü ve ısı ölçer dahil','Sessiz çalışan aksesuarlar','Hediye paketleme seçeneği'],
     thumbs:[ {icon:'baby',grad:'linear-gradient(150deg,#94a3b8,#64748b)'}, {icon:'thermometer',grad:'linear-gradient(150deg,#a3b1c2,#788699)'}, {icon:'headphones',grad:'linear-gradient(150deg,#8b97a8,#5b6678)'} ] },
   { id:'s2', name:'Akıllı Saatler',    featured:false, items:4, price:12999, oldPrice:15999,
+    desc:'Farklı bütçelere uygun 4 akıllı saat modelini bir arada sunan, hediye almak isteyenler için ideal set.',
+    features:['4 farklı model ve renk seçeneği','Her biri için 2 yıl garanti','Ayrı ayrı kutulu teslimat'],
     thumbs:[ {icon:'watch',grad:'linear-gradient(150deg,#2a3a52,#101725)'}, {icon:'watch',grad:'linear-gradient(150deg,#3a2b52,#160f24)'}, {icon:'watch',grad:'linear-gradient(150deg,#1f3b3a,#0d1a19)'} ] },
   { id:'s3', name:'Lüks Teknoloji',    featured:false, items:6, price:38999, oldPrice:45999,
+    desc:'Ev sinema sistemi, hoparlör ve akıllı saati bir arada içeren, premium bir yaşam tarzı için tasarlanmış üst segment set.',
+    features:['4K TV + ses sistemi dahil','Premium marka ürünleri','Ücretsiz kurulum desteği'],
     thumbs:[ {icon:'tv',grad:'linear-gradient(150deg,#22345c,#0e1526)'}, {icon:'speaker',grad:'linear-gradient(150deg,#2a2a3a,#12121c)'}, {icon:'watch',grad:'linear-gradient(150deg,#2a3a52,#101725)'} ] },
   { id:'s4', name:'Oyuncu Başlangıç Seti', featured:true, items:5, price:18499, oldPrice:22999,
+    desc:'Oyuna yeni başlayanlar için klavye, kulaklık ve gamepad\'i bir arada sunan, rekabetçi performansa hazır set.',
+    features:['Mekanik klavye + kulaklık + gamepad','RGB aydınlatma uyumu','Aynı gün kargo'],
     thumbs:[ {icon:'gamepad-2',grad:'linear-gradient(150deg,#a3a9b8,#6b7180)'}, {icon:'headphones',grad:'linear-gradient(150deg,#9aa3b5,#646e80)'}, {icon:'keyboard',grad:'linear-gradient(150deg,#8f97a8,#5b6478)'} ] },
   { id:'s5', name:'Ofis & Çalışma Seti', featured:false, items:4, price:24999, oldPrice:29999,
+    desc:'Evden çalışanlar için dizüstü bilgisayar, monitör ve fareyi bir arada sunan üretkenlik odaklı paket.',
+    features:['Laptop + 27" monitör + mouse','Ergonomik çalışma düzeni','Kurumsal faturaya uygun'],
     thumbs:[ {icon:'laptop',grad:'linear-gradient(150deg,#1f3b3a,#0d1a19)'}, {icon:'monitor',grad:'linear-gradient(150deg,#22345c,#0e1526)'}, {icon:'mouse',grad:'linear-gradient(150deg,#2a3a52,#101725)'} ] },
   { id:'s6', name:'Ses Sistemi Seti',  featured:false, items:3, price:9499,  oldPrice:11999,
+    desc:'Müzik tutkunları için hoparlör, kulaklık ve mikrofonu bir arada sunan ev stüdyosu paketi.',
+    features:['Hoparlör + kulaklık + mikrofon','Stüdyo kalitesinde ses','Kayıt yazılımı önerileri dahil'],
     thumbs:[ {icon:'speaker',grad:'linear-gradient(150deg,#3a2b52,#160f24)'}, {icon:'headphones',grad:'linear-gradient(150deg,#2a2a3a,#12121c)'}, {icon:'mic',grad:'linear-gradient(150deg,#22345c,#0e1526)'} ] }
 ];
 
@@ -107,3 +119,45 @@ GD.getGallery = function(product){
     { icon: product.icon, grad: `linear-gradient(${(angle + 270) % 360}deg,${c2},${c1})` }
   ];
 };
+
+/* ---------- Müşteri Yorumları (reviews.html) ---------- */
+(function(){
+  const REVIEWS_KEY = 'gd_reviews';
+  const SEED_REVIEWS = [
+    { id:'r1', name:'Elif K.', rating:5, productId:1, date:'2026-06-02', comment:'Aurora X12 Pro kamerası gerçekten harika, kargo da 1 günde geldi. Kesinlikle tavsiye ederim.' },
+    { id:'r2', name:'Mert Y.', rating:4, productId:7, date:'2026-06-10', comment:'PulseSound kulaklığın gürültü engelleme özelliği bu fiyata beklediğimden iyi çıktı. Sadece kutusu biraz hırpalanmış geldi.' },
+    { id:'r3', name:'Zeynep A.', rating:5, productId:4, date:'2026-05-22', comment:'NovaBook ile video kurgu yapıyorum, hiç takılma yaşamadım. Yıllardır aldığım en iyi teknoloji ürünü.' },
+    { id:'r4', name:'Can T.', rating:3, productId:11, date:'2026-05-15', comment:'VoltGrip gamepad fena değil ama Bluetooth bağlantısı bazen kopuyor. Kablolu kullanınca sorun yok.' },
+    { id:'r5', name:'Selin D.', rating:5, productId:15, date:'2026-04-30', comment:'ChronoFit 2 ile uyku takibi çok isabetli. Pil ömrü de iddia edildiği gibi gerçekten bir hafta gidiyor.' },
+    { id:'r6', name:'Ahmet B.', rating:4, productId:13, date:'2026-04-18', comment:'PowerCell powerbank günlük kullanımda telefonu 3 kez dolduruyor, seyahatlerde artık yanımdan ayırmıyorum.' },
+    { id:'r7', name:'Buse S.', rating:2, productId:9, date:'2026-04-05', comment:'StudioMic mikrofonun sesi iyi ama masaüstü standı biraz oynak, ekstra bir stand almanız gerekebilir.' },
+    { id:'r8', name:'Onur K.', rating:5, productId:10, date:'2026-03-28', comment:'StrikePad klavye ile refleks süresi gerçekten fark ediliyor, RGB aydınlatma da çok şık duruyor.' }
+  ];
+
+  function getReviews(){
+    let stored;
+    try { stored = JSON.parse(localStorage.getItem(REVIEWS_KEY)); }
+    catch(e){ stored = null; }
+    if(!Array.isArray(stored)){
+      localStorage.setItem(REVIEWS_KEY, JSON.stringify(SEED_REVIEWS));
+      stored = SEED_REVIEWS;
+    }
+    return stored;
+  }
+  function addReview({ name, rating, comment, productId }){
+    const reviews = getReviews();
+    const review = {
+      id: 'r' + Date.now().toString(36),
+      name: name || 'Misafir',
+      rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+      comment: comment || '',
+      productId: productId || null,
+      date: new Date().toISOString().slice(0,10)
+    };
+    reviews.unshift(review);
+    localStorage.setItem(REVIEWS_KEY, JSON.stringify(reviews));
+    return review;
+  }
+
+  Object.assign(GD, { getReviews, addReview });
+})();
