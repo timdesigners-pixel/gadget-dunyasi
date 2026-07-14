@@ -1,0 +1,18 @@
+{
+  "name": "gadget-dunyasi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "gadgetdünyası — statik e-ticaret demosu",
+  "scripts": {
+    "serve": "node scripts/serve.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "jsdom": "^25.0.0",
+    "vitest": "^2.1.0"
+  }
+}

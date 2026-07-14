@@ -90,7 +90,7 @@ window.GD = window.GD || {};
       <div class="cart-row">
         <div class="thumb">${GD.mediaImgTag(i.icon, i.grad, i.name, {size:120})}</div>
         <div class="info">
-          <div class="name">${i.name}</div>
+          <div class="name">${GD.escapeHtml(i.name)}</div>
           <div class="meta">${i.qty} adet · ${GD.fmt(i.price)}</div>
         </div>
         <button class="remove" data-id="${i.id}"><i data-lucide="x" style="width:15px;height:15px;"></i></button>

@@ -168,11 +168,9 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/checkout-logic.js"></script>
 <script>
   lucide.createIcons();
-
-  const FREE_SHIPPING_THRESHOLD = 150;
-  const SHIPPING_FEE = 49.90;
 
   const cart = GD.getCart();
   const checkoutForm = document.getElementById('checkoutForm');
@@ -183,14 +181,10 @@
   } else {
     checkoutForm.style.display = 'grid';
 
-    const subtotal = GD.cartSubtotal(cart);
-    const discount = GD.couponDiscount(subtotal);
-    const afterDiscount = subtotal - discount;
-    const shipping = afterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-    const total = afterDiscount + shipping;
+    const { subtotal, discount, shipping, total } = GD.checkout.computeTotals(cart);
 
     document.getElementById('orderSummaryMini').innerHTML = cart.map(i=>`
-      <div class="mini-line"><span class="name">${i.qty}x ${i.name}</span><span>${GD.fmt(i.qty*i.price)}</span></div>
+      <div class="mini-line"><span class="name">${i.qty}x ${GD.escapeHtml(i.name)}</span><span>${GD.fmt(i.qty*i.price)}</span></div>
     `).join('');
     document.getElementById('ckSubtotal').textContent = GD.fmt(subtotal);
     if(discount > 0){
@@ -221,15 +215,13 @@
     payOptCash.addEventListener('click', ()=>{ payOptCash.querySelector('input').checked = true; syncPayMethod(); });
 
     document.getElementById('cardNumber').addEventListener('input', (e)=>{
-      let digits = e.target.value.replace(/\D/g,'').slice(0,16);
-      e.target.value = digits.replace(/(.{4})/g,'$1 ').trim();
+      e.target.value = GD.checkout.formatCardNumber(e.target.value);
     });
     document.getElementById('cardExpiry').addEventListener('input', (e)=>{
-      let digits = e.target.value.replace(/\D/g,'').slice(0,4);
-      e.target.value = digits.length > 2 ? digits.slice(0,2) + '/' + digits.slice(2) : digits;
+      e.target.value = GD.checkout.formatCardExpiry(e.target.value);
     });
     document.getElementById('cardCvv').addEventListener('input', (e)=>{
-      e.target.value = e.target.value.replace(/\D/g,'').slice(0,4);
+      e.target.value = GD.checkout.formatCardCvv(e.target.value);
     });
 
     function setError(id, msg){
@@ -243,8 +235,8 @@
       const val = id => document.getElementById(id).value.trim();
 
       if(!val('fullName')){ setError('fullName','Ad soyad gerekli.'); ok = false; } else setError('fullName','');
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val('email'))){ setError('email','Geçerli bir e-posta girin.'); ok = false; } else setError('email','');
-      if(val('phone').replace(/\D/g,'').length < 10){ setError('phone','Geçerli bir telefon numarası girin.'); ok = false; } else setError('phone','');
+      if(!GD.checkout.isValidEmail(val('email'))){ setError('email','Geçerli bir e-posta girin.'); ok = false; } else setError('email','');
+      if(!GD.checkout.isValidPhone(val('phone'))){ setError('phone','Geçerli bir telefon numarası girin.'); ok = false; } else setError('phone','');
       if(!val('address')){ setError('address','Adres gerekli.'); ok = false; } else setError('address','');
       if(!val('city')){ setError('city','Şehir gerekli.'); ok = false; } else setError('city','');
       if(!val('zip')){ setError('zip','Posta kodu gerekli.'); ok = false; } else setError('zip','');
@@ -252,9 +244,9 @@
       const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
       if(method === 'card'){
         if(!val('cardName')){ setError('cardName','Kart üzerindeki isim gerekli.'); ok = false; } else setError('cardName','');
-        if(val('cardNumber').replace(/\s/g,'').length !== 16){ setError('cardNumber','16 haneli kart numarası girin.'); ok = false; } else setError('cardNumber','');
-        if(!/^\d{2}\/\d{2}$/.test(val('cardExpiry'))){ setError('cardExpiry','AA/YY formatında girin.'); ok = false; } else setError('cardExpiry','');
-        if(!/^\d{3,4}$/.test(val('cardCvv'))){ setError('cardCvv','3-4 haneli CVV girin.'); ok = false; } else setError('cardCvv','');
+        if(!GD.checkout.isValidCardNumber(val('cardNumber'))){ setError('cardNumber','16 haneli kart numarası girin.'); ok = false; } else setError('cardNumber','');
+        if(!GD.checkout.isValidCardExpiry(val('cardExpiry'))){ setError('cardExpiry','AA/YY formatında girin.'); ok = false; } else setError('cardExpiry','');
+        if(!GD.checkout.isValidCardCvv(val('cardCvv'))){ setError('cardCvv','3-4 haneli CVV girin.'); ok = false; } else setError('cardCvv','');
       }
       return ok;
     }
@@ -265,20 +257,16 @@
 
       const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
       const currentCart = GD.getCart();
-      const currentSubtotal = GD.cartSubtotal(currentCart);
-      const currentDiscount = GD.couponDiscount(currentSubtotal);
-      const currentAfterDiscount = currentSubtotal - currentDiscount;
-      const currentShipping = currentAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-      const currentTotal = currentAfterDiscount + currentShipping;
+      const totals = GD.checkout.computeTotals(currentCart);
       const coupon = GD.getCoupon();
 
       const order = GD.createOrder({
         items: currentCart,
-        subtotal: currentSubtotal,
-        discount: currentDiscount,
+        subtotal: totals.subtotal,
+        discount: totals.discount,
         coupon: coupon ? coupon.code : null,
-        shipping: currentShipping,
-        total: currentTotal,
+        shipping: totals.shipping,
+        total: totals.total,
         address: {
           fullName: document.getElementById('fullName').value.trim(),
           email: document.getElementById('email').value.trim(),
