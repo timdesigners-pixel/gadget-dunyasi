@@ -189,7 +189,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <div>Ürün bulunamadı. <a href="products.html" style="color:var(--orange-2);font-weight:700;">Ürünlere dön</a></div>
       </div>`;
-    document.getElementById('tabsNav').style.display = 'none';
+    // tabsNav detailWrap'in içinde olduğundan yukarıdaki innerHTML ataması sekmeleri de kaldırır
   } else {
     document.title = product.name + ' | gadgetdünyası';
     document.getElementById('breadcrumbCat').textContent = GD.getCategoryLabel(product.cat);

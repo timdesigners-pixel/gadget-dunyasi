@@ -1,7 +1,8 @@
 /* Ürün / paket / kategori verisi — tüm sayfalar bu dosyayı paylaşır */
 window.GD = window.GD || {};
 
-GD.fmt = n => n.toLocaleString('tr-TR') + ' TL';
+/* Küsuratlı tutarlar (ör. 49.90 TL kargo) her zaman iki haneli gösterilir */
+GD.fmt = n => n.toLocaleString('tr-TR', Number.isInteger(n) ? undefined : { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TL';
 
 GD.CATEGORIES = [
   { key:'all', label:'Tümü' },

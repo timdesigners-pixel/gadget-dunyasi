@@ -51,6 +51,11 @@ describe('yardımcı fonksiyonlar', () => {
     expect(GD.fmt(0)).toBe('0 TL');
   });
 
+  it('fmt küsuratlı tutarları iki ondalık haneyle yazar (ör. kargo ücreti)', () => {
+    expect(GD.fmt(49.9)).toBe('49,90 TL');
+    expect(GD.fmt(1234.5)).toBe('1.234,50 TL');
+  });
+
   it('getProduct string/number id ayrımı yapmaz, bilinmeyen için undefined döner', () => {
     expect(GD.getProduct(1)).toBeDefined();
     expect(GD.getProduct('1')).toBe(GD.getProduct(1));

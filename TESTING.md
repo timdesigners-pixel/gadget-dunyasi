@@ -39,6 +39,9 @@ npm run test:e2e
 2. `auth.spec.js` — kayıt/giriş + 2 adımlı doğrulama (demo kodu `123456`)
 3. `admin.spec.js` — yönetici girişi ve panel koruması
 
+Ek olarak `smoke.spec.js` tüm sayfaları gezerek konsol hatası ve
+yakalanmamış istisna olmadığını doğrular (geçersiz ürün id'si dahil).
+
 Statik site `scripts/serve.mjs` ile 4173 portunda otomatik ayağa kalkar.
 Sistemde hazır bir Chromium varsa `PLAYWRIGHT_CHROMIUM_PATH` ile
 gösterilebilir; yoksa `npx playwright install chromium` yeterlidir.
@@ -48,3 +51,9 @@ gösterilebilir; yoksa `npx playwright install chromium` yeterlidir.
 ```bash
 npm run test:all
 ```
+
+## Sürekli entegrasyon
+
+`.github/workflows/tests.yml` her push ve pull request'te önce birim
+testlerini, ardından Chromium ile E2E testlerini çalıştırır; başarısızlıkta
+Playwright raporunu artifact olarak yükler.
