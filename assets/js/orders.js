@@ -30,6 +30,14 @@ window.GD = window.GD || {};
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
     return order;
   }
+  function updateOrder(id, patch){
+    const orders = getOrders();
+    const order = orders.find(o => o.id === id);
+    if(!order) return null;
+    Object.assign(order, patch);
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    return order;
+  }
 
   function getUsers(){
     try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
@@ -46,13 +54,15 @@ window.GD = window.GD || {};
     if(users.some(u => u.email === email)){
       return { ok:false, error:'Bu e-posta adresiyle zaten bir hesap var.' };
     }
-    users.push({ name, email, password, provider:null });
+    users.push({ name, email, password, provider:null, status:'active' });
     saveUsers(users);
     return { ok:true };
   }
   function findUser({ email, password }){
     email = (email || '').trim().toLowerCase();
-    return getUsers().find(u => u.email === email && u.password === password) || null;
+    const user = getUsers().find(u => u.email === email && u.password === password) || null;
+    if(user && user.status === 'blocked') return null;
+    return user;
   }
 
   /* Sosyal medya ile bağlanma (demo): gerçek bir OAuth akışı yoktur, sağlayıcı
@@ -62,12 +72,33 @@ window.GD = window.GD || {};
     const users = getUsers();
     let user = users.find(u => u.email === email);
     if(!user){
-      user = { name, email, password:null, provider };
+      user = { name, email, password:null, provider, status:'active' };
       users.push(user);
       saveUsers(users);
     }
     setSession({ name:user.name, email:user.email, provider });
     return { ok:true };
+  }
+
+  /* ---------- Yönetici için kullanıcı yönetimi (CRUD) ---------- */
+  function adminCreateUser({ name, email, password }){
+    email = (email || '').trim().toLowerCase();
+    const users = getUsers();
+    if(users.some(u => u.email === email)) return { ok:false, error:'Bu e-posta adresiyle zaten bir hesap var.' };
+    users.push({ name, email, password: password || null, provider: password ? null : 'Manuel', status:'active' });
+    saveUsers(users);
+    return { ok:true };
+  }
+  function updateUser(email, patch){
+    const users = getUsers();
+    const user = users.find(u => u.email === email);
+    if(!user) return null;
+    Object.assign(user, patch);
+    saveUsers(users);
+    return user;
+  }
+  function deleteUser(email){
+    saveUsers(getUsers().filter(u => u.email !== email));
   }
 
   function setSession(session){
@@ -103,8 +134,9 @@ window.GD = window.GD || {};
   }
 
   Object.assign(GD, {
-    getOrders, getOrder, createOrder,
+    getOrders, getOrder, createOrder, updateOrder,
     getUsers, createUserAccount, findUser, socialLogin,
+    adminCreateUser, updateUser, deleteUser,
     setSession, getSession, logout,
     DEMO_2FA_CODE,
     ADMIN_ACCOUNT, checkAdminCredentials, setAdminSession, getAdminSession, logoutAdmin

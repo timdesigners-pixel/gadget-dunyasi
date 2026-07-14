@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhasebe | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="admin-header">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;">
+      <a href="admin.html" class="logo">
+        <span class="mark">G</span>
+        <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+      </a>
+      <span class="admin-badge">Yönetici Paneli</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="adminNameLabel" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+      <a href="index.html" class="filter-btn">Mağazayı Görüntüle</a>
+      <button class="filter-btn" id="adminLogoutBtn"><span data-lucide="log-out" style="width:14px;height:14px;"></span> Çıkış Yap</button>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content">
+    <div class="admin-toolbar">
+      <div>
+        <h1 class="page-title" style="margin:0;">Muhasebe</h1>
+        <p class="page-sub" style="margin:4px 0 0;">Bu tarayıcıdaki sipariş verilerine dayalı gelir raporu.</p>
+      </div>
+      <button class="btn-orange" id="exportCsvBtn">
+        <span data-lucide="download" style="width:15px;height:15px;"></span> CSV Olarak İndir
+      </button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="stat-card"><div class="label">Toplam Ciro</div><div class="value" id="kpiRevenue">0 TL</div></div>
+      <div class="stat-card"><div class="label">Ortalama Sipariş Tutarı</div><div class="value" id="kpiAvg">0 TL</div></div>
+      <div class="stat-card"><div class="label">Toplam Sipariş</div><div class="value" id="kpiCount">0</div></div>
+      <div class="stat-card"><div class="label">İptal Oranı</div><div class="value" id="kpiCancelRate">%0</div></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Aylık Ciro</h3>
+      <div class="bar-chart" id="monthlyChart"></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Kategoriye Göre Gelir</h3>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>Kategori</th><th>Adet</th><th>Gelir</th></tr></thead>
+          <tbody id="categoryTableBody"></tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="categoryEmpty" style="display:none;">Henüz satış verisi yok.</div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Duruma Göre Sipariş Sayısı</h3>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead><tr><th>Durum</th><th>Sipariş Sayısı</th></tr></thead>
+          <tbody id="statusTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
+<script>
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
+    lucide.createIcons();
+    GD.renderAdminSidebar('accounting');
+    GD.renderAdminHeader(adminSession);
+
+    const orders = GD.getOrders();
+    const totalRevenue = orders.reduce((s,o)=>s+o.total, 0);
+    const avgOrder = orders.length ? totalRevenue / orders.length : 0;
+    const cancelCount = orders.filter(o => o.status === 'İptal Edildi').length;
+    const cancelRate = orders.length ? Math.round((cancelCount / orders.length) * 100) : 0;
+
+    document.getElementById('kpiRevenue').textContent = GD.fmt(totalRevenue);
+    document.getElementById('kpiAvg').textContent = GD.fmt(Math.round(avgOrder));
+    document.getElementById('kpiCount').textContent = orders.length;
+    document.getElementById('kpiCancelRate').textContent = '%' + cancelRate;
+
+    // Aylık ciro (son 6 ay)
+    const monthLabels = [];
+    const monthTotals = [];
+    const now = new Date();
+    for(let i=5; i>=0; i--){
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      monthLabels.push(d.toLocaleDateString('tr-TR', { month:'short', year:'2-digit' }));
+      monthTotals.push(0);
+    }
+    orders.forEach(o=>{
+      const d = new Date(o.date);
+      const diffMonths = (now.getFullYear()-d.getFullYear())*12 + (now.getMonth()-d.getMonth());
+      if(diffMonths >= 0 && diffMonths <= 5){
+        monthTotals[5-diffMonths] += o.total;
+      }
+    });
+    const maxMonth = Math.max(...monthTotals, 1);
+    document.getElementById('monthlyChart').innerHTML = monthTotals.map((total,i)=>`
+      <div class="bar-col">
+        <div style="font-size:10.5px;color:var(--muted);">${total>0?GD.fmt(Math.round(total)):''}</div>
+        <div class="bar" style="height:${Math.max(4,(total/maxMonth)*140)}px;"></div>
+        <div class="bar-label">${monthLabels[i]}</div>
+      </div>`).join('');
+
+    // Kategoriye göre gelir
+    const catRevenue = {};
+    orders.forEach(o=>{
+      o.items.forEach(item=>{
+        const product = GD.getProductById(item.id);
+        const catKey = product ? product.cat : 'diğer';
+        if(!catRevenue[catKey]) catRevenue[catKey] = { qty:0, revenue:0 };
+        catRevenue[catKey].qty += item.qty;
+        catRevenue[catKey].revenue += item.qty * item.price;
+      });
+    });
+    const catEntries = Object.entries(catRevenue).sort((a,b)=>b[1].revenue-a[1].revenue);
+    document.getElementById('categoryEmpty').style.display = catEntries.length === 0 ? 'block' : 'none';
+    document.getElementById('categoryTableBody').innerHTML = catEntries.map(([key,data])=>`
+      <tr><td>${GD.getCategoryLabel(key)}</td><td>${data.qty}</td><td>${GD.fmt(data.revenue)}</td></tr>
+    `).join('');
+
+    // Duruma göre sipariş sayısı
+    const statusCounts = {};
+    orders.forEach(o=>{
+      const s = o.status || 'Onaylandı';
+      statusCounts[s] = (statusCounts[s]||0) + 1;
+    });
+    document.getElementById('statusTableBody').innerHTML = Object.entries(statusCounts).map(([s,c])=>`
+      <tr><td>${GD.escapeHtml(s)}</td><td>${c}</td></tr>
+    `).join('') || '<tr><td colspan="2" style="color:var(--muted);">Henüz sipariş yok.</td></tr>';
+
+    // CSV dışa aktarma (gerçekten çalışır - sunucu gerektirmez)
+    document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+      const escapeCsv = v => `"${String(v==null?'':v).replace(/"/g,'""')}"`;
+      const header = ['Sipariş No','Tarih','Müşteri','E-posta','Ürünler','Ara Toplam','İndirim','Kargo','Toplam','Durum'];
+      const rows = orders.map(o => [
+        o.id,
+        new Date(o.date).toLocaleString('tr-TR'),
+        (o.address && o.address.fullName) || '',
+        (o.address && o.address.email) || '',
+        o.items.map(i=>`${i.qty}x ${i.name}`).join(' | '),
+        o.subtotal, o.discount||0, o.shipping, o.total,
+        o.status || 'Onaylandı'
+      ]);
+      const csv = [header, ...rows].map(r => r.map(escapeCsv).join(',')).join('\r\n');
+      const blob = new Blob(['﻿' + csv], { type:'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `siparisler-${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  }
+</script>
+</body>
+</html>

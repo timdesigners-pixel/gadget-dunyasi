@@ -101,18 +101,7 @@
 
       <div class="checkout-card">
         <h3><span data-lucide="credit-card"></span> Ödeme Yöntemi</h3>
-        <div class="pay-options">
-          <label class="pay-option active" id="payOptCard">
-            <input type="radio" name="payMethod" value="card" checked>
-            <span data-lucide="credit-card"></span>
-            <div><div class="label">Kredi / Banka Kartı</div><div class="sub">Visa, Mastercard, Troy</div></div>
-          </label>
-          <label class="pay-option" id="payOptCash">
-            <input type="radio" name="payMethod" value="cash">
-            <span data-lucide="banknote"></span>
-            <div><div class="label">Kapıda Ödeme</div><div class="sub">Nakit veya kartla teslimatta öde</div></div>
-          </label>
-        </div>
+        <div class="pay-options" id="payOptions"></div>
         <div class="card-fields show" id="cardFields">
           <div class="form-grid">
             <div class="form-field full">
@@ -166,13 +155,14 @@
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
 <script>
   lucide.createIcons();
 
-  const FREE_SHIPPING_THRESHOLD = 150;
-  const SHIPPING_FEE = 49.90;
+  const { freeShippingThreshold: FREE_SHIPPING_THRESHOLD, shippingFee: SHIPPING_FEE } = GD.getSettings();
 
   const cart = GD.getCart();
   const checkoutForm = document.getElementById('checkoutForm');
@@ -206,19 +196,34 @@
       document.getElementById('email').value = session.email;
     }
 
-    // Ödeme yöntemi seçimi
-    const payOptCard = document.getElementById('payOptCard');
-    const payOptCash = document.getElementById('payOptCash');
+    // Ödeme yöntemi seçimi - admin panelindeki "Ödeme Yöntemleri" listesinden (yalnızca etkin olanlar)
+    const payOptions = document.getElementById('payOptions');
+    const enabledMethods = GD.getPaymentMethods().filter(m => m.enabled);
+    if(enabledMethods.length === 0){
+      payOptions.innerHTML = `<div class="empty-state" style="padding:24px;">Şu anda aktif bir ödeme yöntemi yok. Lütfen daha sonra tekrar deneyin.</div>`;
+      checkoutForm.querySelector('button[type="submit"]').disabled = true;
+    } else {
+      payOptions.innerHTML = enabledMethods.map((m,i)=>`
+        <label class="pay-option${i===0?' active':''}" data-method="${m.key}">
+          <input type="radio" name="payMethod" value="${m.key}" ${i===0?'checked':''}>
+          <span data-lucide="${m.icon}"></span>
+          <div><div class="label">${GD.escapeHtml(m.label)}</div><div class="sub">${GD.escapeHtml(m.sub || '')}</div></div>
+        </label>`).join('');
+      GD.createIconsIn(payOptions);
+    }
+
     const cardFields = document.getElementById('cardFields');
     function syncPayMethod(){
-      const method = checkoutForm.querySelector('input[name="payMethod"]:checked').value;
-      payOptCard.classList.toggle('active', method === 'card');
-      payOptCash.classList.toggle('active', method === 'cash');
-      cardFields.classList.toggle('show', method === 'card');
+      const checked = checkoutForm.querySelector('input[name="payMethod"]:checked');
+      if(!checked) return;
+      payOptions.querySelectorAll('.pay-option').forEach(opt => opt.classList.toggle('active', opt.dataset.method === checked.value));
+      cardFields.classList.toggle('show', checked.value === 'card');
     }
     checkoutForm.querySelectorAll('input[name="payMethod"]').forEach(r => r.addEventListener('change', syncPayMethod));
-    payOptCard.addEventListener('click', ()=>{ payOptCard.querySelector('input').checked = true; syncPayMethod(); });
-    payOptCash.addEventListener('click', ()=>{ payOptCash.querySelector('input').checked = true; syncPayMethod(); });
+    payOptions.querySelectorAll('.pay-option').forEach(opt=>{
+      opt.addEventListener('click', ()=>{ opt.querySelector('input').checked = true; syncPayMethod(); });
+    });
+    syncPayMethod();
 
     document.getElementById('cardNumber').addEventListener('input', (e)=>{
       let digits = e.target.value.replace(/\D/g,'').slice(0,16);

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kargo Entegrasyonu | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="admin-header">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;">
+      <a href="admin.html" class="logo">
+        <span class="mark">G</span>
+        <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+      </a>
+      <span class="admin-badge">Yönetici Paneli</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="adminNameLabel" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+      <a href="index.html" class="filter-btn">Mağazayı Görüntüle</a>
+      <button class="filter-btn" id="adminLogoutBtn"><span data-lucide="log-out" style="width:14px;height:14px;"></span> Çıkış Yap</button>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content">
+    <h1 class="page-title" style="margin-top:0;">Kargo Entegrasyonu</h1>
+    <p class="page-sub">Taşıyıcı bağlantılarını yönet ve siparişlere kargo ata. Bağlantı testleri ve takip numaraları simülasyondur, gerçek bir kargo firması API'sine bağlı değildir.</p>
+
+    <div class="admin-section">
+      <h3>Taşıyıcılar</h3>
+      <div class="carrier-grid" id="carrierGrid"></div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Kargoya Verilmeyi Bekleyen Siparişler</h3>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Sipariş No</th><th>Müşteri</th><th>Durum</th><th>Taşıyıcı</th><th></th></tr>
+          </thead>
+          <tbody id="pendingTableBody"></tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="pendingEmpty" style="display:none;">Kargoya verilmeyi bekleyen sipariş yok.</div>
+    </div>
+
+    <div class="admin-section">
+      <h3>Kargoya Verilen Siparişler</h3>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Sipariş No</th><th>Taşıyıcı</th><th>Takip No</th><th>Durum</th></tr>
+          </thead>
+          <tbody id="shippedTableBody"></tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="shippedEmpty" style="display:none;">Henüz kargoya verilen sipariş yok.</div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
+<script>
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
+    lucide.createIcons();
+    GD.renderAdminSidebar('shipping');
+    GD.renderAdminHeader(adminSession);
+
+    const carrierGrid = document.getElementById('carrierGrid');
+
+    function renderCarriers(){
+      const carriers = GD.getCarriers();
+      carrierGrid.innerHTML = carriers.map(c=>`
+        <div class="carrier-card">
+          <div>
+            <div class="name">${GD.escapeHtml(c.name)}</div>
+            <div class="key">API Anahtarı: ${GD.escapeHtml(c.apiKeyMasked)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+            <label class="toggle-switch">
+              <input type="checkbox" data-id="${c.id}" ${c.enabled ? 'checked' : ''}>
+              <span class="track"></span>
+            </label>
+            <button class="btn-sm" data-action="test" data-id="${c.id}">Bağlantıyı Test Et</button>
+          </div>
+        </div>`).join('');
+
+      carrierGrid.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+        cb.addEventListener('change', ()=>{
+          const carriers = GD.getCarriers();
+          const carrier = carriers.find(c=>c.id===cb.dataset.id);
+          carrier.enabled = cb.checked;
+          GD.saveCarriers(carriers);
+          renderPending();
+        });
+      });
+      carrierGrid.querySelectorAll('[data-action="test"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const original = btn.textContent;
+          btn.textContent = 'Test ediliyor...';
+          btn.disabled = true;
+          setTimeout(()=>{
+            btn.textContent = 'Bağlantı Başarılı ✓';
+            setTimeout(()=>{ btn.textContent = original; btn.disabled = false; }, 1500);
+          }, 700);
+        });
+      });
+    }
+
+    function renderPending(){
+      const enabledCarriers = GD.getCarriers().filter(c=>c.enabled);
+      const orders = GD.getOrders().filter(o => !o.trackingNumber && (o.status||'Onaylandı') !== 'İptal Edildi');
+      const pendingBody = document.getElementById('pendingTableBody');
+      document.getElementById('pendingEmpty').style.display = orders.length === 0 ? 'block' : 'none';
+      pendingBody.innerHTML = orders.map(o=>`
+        <tr>
+          <td>${GD.escapeHtml(o.id)}</td>
+          <td>${GD.escapeHtml((o.address && o.address.fullName) || '—')}</td>
+          <td>${GD.escapeHtml(o.status || 'Onaylandı')}</td>
+          <td>
+            <select class="select-field carrier-select" data-id="${o.id}" style="font-size:11.5px;padding:6px 9px;" ${enabledCarriers.length===0?'disabled':''}>
+              ${enabledCarriers.length===0
+                ? '<option>Aktif taşıyıcı yok</option>'
+                : enabledCarriers.map(c=>`<option value="${c.id}">${GD.escapeHtml(c.name)}</option>`).join('')}
+            </select>
+          </td>
+          <td><button class="btn-sm" data-action="ship" data-id="${o.id}" ${enabledCarriers.length===0?'disabled':''}>Kargoya Ver</button></td>
+        </tr>`).join('');
+
+      pendingBody.querySelectorAll('[data-action="ship"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const row = btn.closest('tr');
+          const carrierId = row.querySelector('.carrier-select').value;
+          const carrier = GD.getCarriers().find(c=>c.id===carrierId);
+          if(!carrier) return;
+          const trackingNumber = GD.generateTrackingNumber(carrierId);
+          GD.updateOrder(btn.dataset.id, { status:'Kargoya Verildi', trackingNumber, carrierName: carrier.name });
+          renderPending();
+          renderShipped();
+        });
+      });
+    }
+
+    function renderShipped(){
+      const orders = GD.getOrders().filter(o => o.trackingNumber);
+      const shippedBody = document.getElementById('shippedTableBody');
+      document.getElementById('shippedEmpty').style.display = orders.length === 0 ? 'block' : 'none';
+      shippedBody.innerHTML = orders.map(o=>`
+        <tr>
+          <td>${GD.escapeHtml(o.id)}</td>
+          <td>${GD.escapeHtml(o.carrierName || '—')}</td>
+          <td>${GD.escapeHtml(o.trackingNumber)}</td>
+          <td>${GD.escapeHtml(o.status || 'Kargoya Verildi')}</td>
+        </tr>`).join('');
+    }
+
+    renderCarriers();
+    renderPending();
+    renderShipped();
+  }
+</script>
+</body>
+</html>

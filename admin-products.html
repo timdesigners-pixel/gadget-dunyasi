@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ürün Yönetimi | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="admin-header">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;">
+      <a href="admin.html" class="logo">
+        <span class="mark">G</span>
+        <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+      </a>
+      <span class="admin-badge">Yönetici Paneli</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="adminNameLabel" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+      <a href="index.html" class="filter-btn">Mağazayı Görüntüle</a>
+      <button class="filter-btn" id="adminLogoutBtn"><span data-lucide="log-out" style="width:14px;height:14px;"></span> Çıkış Yap</button>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content">
+    <div class="admin-toolbar">
+      <div>
+        <h1 class="page-title" style="margin:0;">Ürün Yönetimi</h1>
+        <p class="page-sub" style="margin:4px 0 0;">Ürün ekle, düzenle veya kaldır - değişiklikler mağazaya anında yansır.</p>
+      </div>
+      <button class="btn-orange" id="addProductBtn">
+        <span data-lucide="plus" style="width:15px;height:15px;"></span> Ürün Ekle
+      </button>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-toolbar" style="margin-bottom:0;">
+        <input type="text" class="search-box" id="productSearch" placeholder="Ürün adı ara...">
+        <select class="select-field" id="productCatFilter"><option value="">Tüm Kategoriler</option></select>
+      </div>
+      <div style="overflow-x:auto;margin-top:16px;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Ürün</th><th>Kategori</th><th>Fiyat</th><th>Puan</th><th>Etiket</th><th></th></tr>
+          </thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="productsEmpty" style="display:none;">Ürün bulunamadı.</div>
+    </div>
+  </main>
+</div>
+
+<div class="admin-modal-overlay" id="productModal">
+  <div class="admin-modal" style="max-width:680px;">
+    <button class="admin-modal-close" id="productModalClose">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3 id="productModalTitle">Ürün Ekle</h3>
+    <form id="productForm">
+      <div class="form-grid">
+        <div class="form-field full">
+          <label for="pName">Ürün Adı</label>
+          <input type="text" id="pName">
+          <div class="err-msg" id="err-pName"></div>
+        </div>
+        <div class="form-field">
+          <label for="pCat">Kategori</label>
+          <select id="pCat"></select>
+        </div>
+        <div class="form-field">
+          <label for="pTag">Etiket</label>
+          <select id="pTag"><option value="">Etiket yok</option></select>
+        </div>
+        <div class="form-field">
+          <label for="pIcon">İkon</label>
+          <select id="pIcon"></select>
+        </div>
+        <div class="form-field">
+          <label for="pPrice">Fiyat (TL)</label>
+          <input type="number" id="pPrice" min="0" step="1">
+          <div class="err-msg" id="err-pPrice"></div>
+        </div>
+        <div class="form-field">
+          <label for="pOldPrice">Eski Fiyat (opsiyonel)</label>
+          <input type="number" id="pOldPrice" min="0" step="1">
+        </div>
+        <div class="form-field">
+          <label for="pRating">Puan (0-5)</label>
+          <input type="number" id="pRating" min="0" max="5" step="0.1" value="4.5">
+        </div>
+        <div class="form-field">
+          <label for="pReviews">Değerlendirme Sayısı</label>
+          <input type="number" id="pReviews" min="0" step="1" value="0">
+        </div>
+        <div class="form-field full">
+          <label for="pDesc">Açıklama</label>
+          <input type="text" id="pDesc">
+        </div>
+      </div>
+
+      <div class="form-field full">
+        <label>Teknik Özellikler</label>
+        <div id="specRows" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;"></div>
+        <button type="button" class="btn-sm" id="addSpecRowBtn" style="margin-top:8px;width:fit-content;">
+          <span data-lucide="plus" style="width:12px;height:12px;"></span> Özellik Ekle
+        </button>
+      </div>
+
+      <button type="submit" class="btn-orange" style="width:100%;justify-content:center;margin-top:18px;">Kaydet</button>
+    </form>
+  </div>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
+<script>
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
+    lucide.createIcons();
+    GD.renderAdminSidebar('products');
+    GD.renderAdminHeader(adminSession);
+
+    const ICON_CHOICES = ['smartphone','laptop','tablet','headphones','watch','camera','gamepad-2',
+      'keyboard','mouse','monitor','speaker','mic','battery-charging','tv','gift','package'];
+    const GRAD_PALETTE = [
+      'linear-gradient(150deg,#22345c,#0e1526)','linear-gradient(150deg,#3a2b52,#160f24)',
+      'linear-gradient(150deg,#1f3b3a,#0d1a19)','linear-gradient(150deg,#4a2a2a,#1c1010)',
+      'linear-gradient(150deg,#2a3a52,#101725)','linear-gradient(150deg,#452a3a,#1a0f18)',
+      'linear-gradient(150deg,#20403c,#0d1a18)','linear-gradient(150deg,#4a2f2a,#1c1310)'
+    ];
+
+    const productsTableBody = document.getElementById('productsTableBody');
+    const productsEmpty = document.getElementById('productsEmpty');
+    const productSearch = document.getElementById('productSearch');
+    const productCatFilter = document.getElementById('productCatFilter');
+    const productModal = document.getElementById('productModal');
+    const productForm = document.getElementById('productForm');
+    const specRows = document.getElementById('specRows');
+    let editingId = null;
+
+    const cats = GD.getCategories().filter(c => c.key !== 'all');
+    productCatFilter.innerHTML += cats.map(c=>`<option value="${c.key}">${GD.escapeHtml(c.label)}</option>`).join('');
+    document.getElementById('pCat').innerHTML = cats.map(c=>`<option value="${c.key}">${GD.escapeHtml(c.label)}</option>`).join('');
+    document.getElementById('pIcon').innerHTML = ICON_CHOICES.map(i=>`<option value="${i}">${i}</option>`).join('');
+    document.getElementById('pTag').innerHTML += GD.getTags().map(t=>`<option value="${t.key}">${GD.escapeHtml(t.label)}</option>`).join('');
+
+    function addSpecRow(key, value){
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.gap = '8px';
+      row.innerHTML = `
+        <input type="text" class="spec-key" placeholder="Özellik (örn. Ekran)" value="${GD.escapeHtml(key||'')}" style="flex:1;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 10px;font-size:13px;">
+        <input type="text" class="spec-val" placeholder="Değer (örn. 6.5 inç)" value="${GD.escapeHtml(value||'')}" style="flex:1;background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 10px;font-size:13px;">
+        <button type="button" class="btn-sm danger remove-spec">Sil</button>`;
+      row.querySelector('.remove-spec').addEventListener('click', ()=> row.remove());
+      specRows.appendChild(row);
+    }
+    document.getElementById('addSpecRowBtn').addEventListener('click', ()=> addSpecRow());
+
+    function renderProducts(){
+      const q = productSearch.value.trim().toLowerCase();
+      const catFilter = productCatFilter.value;
+      let list = GD.getAllProducts();
+      if(catFilter) list = list.filter(p => p.cat === catFilter);
+      if(q) list = list.filter(p => p.name.toLowerCase().includes(q));
+
+      productsEmpty.style.display = list.length === 0 ? 'block' : 'none';
+      productsTableBody.innerHTML = list.map(p=>`
+        <tr>
+          <td>${GD.escapeHtml(p.name)}</td>
+          <td>${GD.getCategoryLabel(p.cat)}</td>
+          <td>${GD.fmt(p.price)}</td>
+          <td>${p.rating} (${p.reviews})</td>
+          <td>${(GD.getTag(p.badge) || {}).label || '—'}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-action="edit" data-id="${p.id}">Düzenle</button>
+              <button class="btn-sm danger" data-action="delete" data-id="${p.id}">Sil</button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      productsTableBody.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+        btn.addEventListener('click', ()=> openEdit(btn.dataset.id));
+      });
+      productsTableBody.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          if(confirm('Bu ürünü silmek istediğinizden emin misiniz?')){
+            GD.deleteProduct(btn.dataset.id);
+            renderProducts();
+          }
+        });
+      });
+    }
+
+    function openAdd(){
+      editingId = null;
+      document.getElementById('productModalTitle').textContent = 'Ürün Ekle';
+      productForm.reset();
+      specRows.innerHTML = '';
+      document.getElementById('pRating').value = 4.5;
+      document.getElementById('pReviews').value = 0;
+      productModal.classList.add('open');
+    }
+    function openEdit(id){
+      const p = GD.getProductById(id);
+      if(!p) return;
+      editingId = id;
+      document.getElementById('productModalTitle').textContent = 'Ürünü Düzenle';
+      document.getElementById('pName').value = p.name;
+      document.getElementById('pCat').value = p.cat;
+      document.getElementById('pTag').value = p.badge || '';
+      document.getElementById('pIcon').value = p.icon;
+      document.getElementById('pPrice').value = p.price;
+      document.getElementById('pOldPrice').value = p.oldPrice || '';
+      document.getElementById('pRating').value = p.rating;
+      document.getElementById('pReviews').value = p.reviews;
+      document.getElementById('pDesc').value = p.desc || '';
+      specRows.innerHTML = '';
+      (p.specs || []).forEach(([k,v]) => addSpecRow(k,v));
+      productModal.classList.add('open');
+    }
+    document.getElementById('addProductBtn').addEventListener('click', openAdd);
+    document.getElementById('productModalClose').addEventListener('click', ()=> productModal.classList.remove('open'));
+    productModal.addEventListener('click', (e)=>{ if(e.target === productModal) productModal.classList.remove('open'); });
+
+    productForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('pName').value.trim();
+      const price = Number(document.getElementById('pPrice').value);
+      document.getElementById('err-pName').textContent = '';
+      document.getElementById('err-pPrice').textContent = '';
+      if(!name){ document.getElementById('err-pName').textContent = 'Ürün adı gerekli.'; return; }
+      if(!price || price <= 0){ document.getElementById('err-pPrice').textContent = 'Geçerli bir fiyat girin.'; return; }
+
+      const specs = Array.from(specRows.children).map(row=>{
+        const k = row.querySelector('.spec-key').value.trim();
+        const v = row.querySelector('.spec-val').value.trim();
+        return (k && v) ? [k,v] : null;
+      }).filter(Boolean);
+
+      const oldPriceVal = document.getElementById('pOldPrice').value;
+      const id = editingId || GD.nextProductId();
+      const existing = editingId ? GD.getProductById(editingId) : null;
+      const product = {
+        id, name,
+        cat: document.getElementById('pCat').value,
+        price,
+        oldPrice: oldPriceVal ? Number(oldPriceVal) : null,
+        rating: Number(document.getElementById('pRating').value) || 0,
+        reviews: Number(document.getElementById('pReviews').value) || 0,
+        badge: document.getElementById('pTag').value || null,
+        icon: document.getElementById('pIcon').value,
+        grad: (existing && existing.grad) || GRAD_PALETTE[id % GRAD_PALETTE.length],
+        desc: document.getElementById('pDesc').value.trim(),
+        specs
+      };
+      GD.upsertProduct(product);
+      productModal.classList.remove('open');
+      renderProducts();
+    });
+
+    productSearch.addEventListener('input', renderProducts);
+    productCatFilter.addEventListener('change', renderProducts);
+    renderProducts();
+  }
+</script>
+</body>
+</html>

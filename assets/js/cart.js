@@ -102,7 +102,18 @@ window.GD = window.GD || {};
   }
   GD.renderHeaderCart = renderHeaderCart;
 
+  function renderMaintenanceBanner(){
+    if(!GD.getSettings || !GD.getSettings().maintenanceMode) return;
+    if(document.getElementById('maintenanceBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'maintenanceBanner';
+    banner.style.cssText = 'background:#ff5b6b;color:#2a0505;font-size:12.5px;font-weight:700;text-align:center;padding:9px 12px;';
+    banner.textContent = 'Site şu anda bakım modunda. Bazı işlemler geçici olarak kullanılamayabilir.';
+    document.body.insertBefore(banner, document.body.firstChild);
+  }
+
   function initHeaderCart(){
+    renderMaintenanceBanner();
     const cartToggle = document.getElementById('cartToggle');
     const cartPanel = document.getElementById('cartPanel');
     if(!cartToggle) return;

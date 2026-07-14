@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kategori Yönetimi | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="admin-header">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;">
+      <a href="admin.html" class="logo">
+        <span class="mark">G</span>
+        <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+      </a>
+      <span class="admin-badge">Yönetici Paneli</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="adminNameLabel" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+      <a href="index.html" class="filter-btn">Mağazayı Görüntüle</a>
+      <button class="filter-btn" id="adminLogoutBtn"><span data-lucide="log-out" style="width:14px;height:14px;"></span> Çıkış Yap</button>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content">
+    <div class="admin-toolbar">
+      <div>
+        <h1 class="page-title" style="margin:0;">Kategori Yönetimi</h1>
+        <p class="page-sub" style="margin:4px 0 0;">Değişiklikler anında ürün listeleme sayfasındaki kategori sekmelerine yansır.</p>
+      </div>
+      <button class="btn-orange" id="addCatBtn">
+        <span data-lucide="plus" style="width:15px;height:15px;"></span> Kategori Ekle
+      </button>
+    </div>
+
+    <div class="admin-section">
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Anahtar</th><th>Görünen Ad</th><th>Ürün Sayısı</th><th></th></tr>
+          </thead>
+          <tbody id="catTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="admin-modal-overlay" id="catModal">
+  <div class="admin-modal">
+    <button class="admin-modal-close" id="catModalClose">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3 id="catModalTitle">Kategori Ekle</h3>
+    <form id="catForm">
+      <div class="form-field full">
+        <label for="catKey">Anahtar (İngilizce, boşluksuz - örn. "aksesuar")</label>
+        <input type="text" id="catKey">
+        <div class="err-msg" id="err-catKey"></div>
+      </div>
+      <div class="form-field full">
+        <label for="catLabel">Görünen Ad</label>
+        <input type="text" id="catLabel">
+        <div class="err-msg" id="err-catLabel"></div>
+      </div>
+      <button type="submit" class="btn-orange" style="width:100%;justify-content:center;">Kaydet</button>
+    </form>
+  </div>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
+<script>
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
+    lucide.createIcons();
+    GD.renderAdminSidebar('categories');
+    GD.renderAdminHeader(adminSession);
+
+    const catTableBody = document.getElementById('catTableBody');
+    const catModal = document.getElementById('catModal');
+    const catForm = document.getElementById('catForm');
+    let editingKey = null;
+
+    function productCountFor(key){
+      return GD.getAllProducts().filter(p => p.cat === key).length;
+    }
+
+    function renderCategories(){
+      const cats = GD.getCategories().filter(c => c.key !== 'all');
+      catTableBody.innerHTML = cats.map(c=>`
+        <tr>
+          <td><code>${GD.escapeHtml(c.key)}</code></td>
+          <td>${GD.escapeHtml(c.label)}</td>
+          <td>${productCountFor(c.key)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-action="edit" data-key="${GD.escapeHtml(c.key)}">Düzenle</button>
+              <button class="btn-sm danger" data-action="delete" data-key="${GD.escapeHtml(c.key)}">Sil</button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      catTableBody.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+        btn.addEventListener('click', ()=> openEdit(btn.dataset.key));
+      });
+      catTableBody.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key = btn.dataset.key;
+          const count = productCountFor(key);
+          if(count > 0){
+            alert(`Bu kategoride ${count} ürün var. Silmeden önce bu ürünleri başka bir kategoriye taşıyın.`);
+            return;
+          }
+          if(confirm('Bu kategoriyi silmek istediğinizden emin misiniz?')){
+            GD.saveCategories(GD.getCategories().filter(c => c.key !== key));
+            renderCategories();
+          }
+        });
+      });
+    }
+
+    function openAdd(){
+      editingKey = null;
+      document.getElementById('catModalTitle').textContent = 'Kategori Ekle';
+      catForm.reset();
+      document.getElementById('catKey').disabled = false;
+      catModal.classList.add('open');
+    }
+    function openEdit(key){
+      const cat = GD.getCategories().find(c=>c.key===key);
+      if(!cat) return;
+      editingKey = key;
+      document.getElementById('catModalTitle').textContent = 'Kategoriyi Düzenle';
+      document.getElementById('catKey').value = cat.key;
+      document.getElementById('catKey').disabled = true;
+      document.getElementById('catLabel').value = cat.label;
+      catModal.classList.add('open');
+    }
+    document.getElementById('addCatBtn').addEventListener('click', openAdd);
+    document.getElementById('catModalClose').addEventListener('click', ()=> catModal.classList.remove('open'));
+    catModal.addEventListener('click', (e)=>{ if(e.target === catModal) catModal.classList.remove('open'); });
+
+    catForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const key = document.getElementById('catKey').value.trim().toLowerCase().replace(/\s+/g,'-');
+      const label = document.getElementById('catLabel').value.trim();
+      document.getElementById('err-catKey').textContent = '';
+      document.getElementById('err-catLabel').textContent = '';
+      if(!key){ document.getElementById('err-catKey').textContent = 'Anahtar gerekli.'; return; }
+      if(!label){ document.getElementById('err-catLabel').textContent = 'Görünen ad gerekli.'; return; }
+
+      const cats = GD.getCategories();
+      if(editingKey){
+        const cat = cats.find(c=>c.key===editingKey);
+        cat.label = label;
+      } else {
+        if(cats.some(c=>c.key===key)){ document.getElementById('err-catKey').textContent = 'Bu anahtar zaten kullanılıyor.'; return; }
+        cats.push({ key, label });
+      }
+      GD.saveCategories(cats);
+      catModal.classList.remove('open');
+      renderCategories();
+    });
+
+    renderCategories();
+  }
+</script>
+</body>
+</html>

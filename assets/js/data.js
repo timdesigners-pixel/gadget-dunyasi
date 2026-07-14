@@ -1,7 +1,7 @@
 /* Ürün / paket / kategori verisi — tüm sayfalar bu dosyayı paylaşır */
 window.GD = window.GD || {};
 
-GD.fmt = n => n.toLocaleString('tr-TR') + ' TL';
+GD.fmt = n => n.toLocaleString('tr-TR') + ' ' + (GD.getSettings ? GD.getSettings().currency : 'TL');
 
 GD.CATEGORIES = [
   { key:'all', label:'Tümü' },
@@ -102,8 +102,9 @@ GD.escapeHtml = function(str){
     .replace(/'/g, '&#39;');
 };
 
-GD.getProduct = id => GD.PRODUCTS.find(p => String(p.id) === String(id));
-GD.getCategoryLabel = key => (GD.CATEGORIES.find(c => c.key === key) || {}).label || key;
+// GD.getProduct artık catalog.js tarafından (admin panelinin yönetebildiği
+// dinamik ürün deposu üzerinden) tanımlanır.
+GD.getCategoryLabel = key => (GD.getCategories().find(c => c.key === key) || {}).label || key;
 
 /*
  * Ürün detay sayfasındaki galeri için 4 açı varyasyonu üretir. Gerçek

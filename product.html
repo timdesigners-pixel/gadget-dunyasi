@@ -174,8 +174,10 @@
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
 <script>
   lucide.createIcons();
 
@@ -325,7 +327,7 @@
     });
 
     // Benzer ürünler
-    const related = GD.PRODUCTS.filter(p => p.cat === product.cat && p.id !== product.id).slice(0,4);
+    const related = GD.getAllProducts().filter(p => p.cat === product.cat && p.id !== product.id).slice(0,4);
     if(related.length){
       document.getElementById('relatedSection').style.display = '';
       document.getElementById('relatedGrid').innerHTML = related.map(p=>{
@@ -334,7 +336,7 @@
         <div class="product-card">
           <div class="product-media">
             <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
-            <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
+            ${GD.renderBadge(p.badge)}
             ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
           </div>
           <div class="product-body">

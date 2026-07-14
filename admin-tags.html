@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etiket Sistemi | gadgetdünyası</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-shell">
+
+<header class="admin-header">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;">
+      <a href="admin.html" class="logo">
+        <span class="mark">G</span>
+        <span>gadgetdünyası<small>ELEKTRONİK PAZARI</small></span>
+      </a>
+      <span class="admin-badge">Yönetici Paneli</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span id="adminNameLabel" style="font-size:13px;color:var(--muted);font-weight:600;"></span>
+      <a href="index.html" class="filter-btn">Mağazayı Görüntüle</a>
+      <button class="filter-btn" id="adminLogoutBtn"><span data-lucide="log-out" style="width:14px;height:14px;"></span> Çıkış Yap</button>
+    </div>
+  </div>
+</header>
+
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content">
+    <div class="admin-toolbar">
+      <div>
+        <h1 class="page-title" style="margin:0;">Etiket Sistemi</h1>
+        <p class="page-sub" style="margin:4px 0 0;">Ürün kartlarındaki renkli rozetleri (Çok Satan, Yeni, İndirim vb.) yönet.</p>
+      </div>
+      <button class="btn-orange" id="addTagBtn">
+        <span data-lucide="plus" style="width:15px;height:15px;"></span> Etiket Ekle
+      </button>
+    </div>
+
+    <div class="admin-section">
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Önizleme</th><th>Anahtar</th><th>Etiket Adı</th><th>Kullanılan Ürün</th><th></th></tr>
+          </thead>
+          <tbody id="tagsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="admin-modal-overlay" id="tagModal">
+  <div class="admin-modal">
+    <button class="admin-modal-close" id="tagModalClose">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3 id="tagModalTitle">Etiket Ekle</h3>
+    <form id="tagForm">
+      <div class="form-field full">
+        <label for="tagKey">Anahtar (İngilizce, boşluksuz)</label>
+        <input type="text" id="tagKey">
+        <div class="err-msg" id="err-tagKey"></div>
+      </div>
+      <div class="form-field full">
+        <label for="tagLabel">Etiket Adı</label>
+        <input type="text" id="tagLabel">
+        <div class="err-msg" id="err-tagLabel"></div>
+      </div>
+      <div class="form-field full">
+        <label>Renk</label>
+        <div class="color-swatch-row" id="colorSwatchRow"></div>
+        <input type="hidden" id="tagColor" value="#ff7a1a">
+      </div>
+      <div class="form-field full">
+        <label>Önizleme</label>
+        <div><span class="product-badge" id="tagPreview" style="position:static;display:inline-block;">Etiket</span></div>
+      </div>
+      <button type="submit" class="btn-orange" style="width:100%;justify-content:center;margin-top:8px;">Kaydet</button>
+    </form>
+  </div>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
+<script>
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
+    lucide.createIcons();
+    GD.renderAdminSidebar('tags');
+    GD.renderAdminHeader(adminSession);
+
+    const COLOR_CHOICES = [
+      { color:'#ff7a1a', text:'#0b1120' }, { color:'#2ed3a3', text:'#062018' },
+      { color:'#ff5b6b', text:'#2a0505' }, { color:'#5a9bff', text:'#051329' },
+      { color:'#c084fc', text:'#1f0b2e' }, { color:'#facc15', text:'#2b2205' },
+      { color:'#f472b6', text:'#2a0a1a' }, { color:'#94a3b8', text:'#0b1120' }
+    ];
+
+    const tagsTableBody = document.getElementById('tagsTableBody');
+    const tagModal = document.getElementById('tagModal');
+    const tagForm = document.getElementById('tagForm');
+    const colorSwatchRow = document.getElementById('colorSwatchRow');
+    const tagColorInput = document.getElementById('tagColor');
+    const tagPreview = document.getElementById('tagPreview');
+    let editingKey = null;
+    let currentTextColor = '#0b1120';
+
+    colorSwatchRow.innerHTML = COLOR_CHOICES.map(c=>`<span class="color-swatch" data-color="${c.color}" data-text="${c.text}" style="background:${c.color};"></span>`).join('');
+    colorSwatchRow.querySelectorAll('.color-swatch').forEach(sw=>{
+      sw.addEventListener('click', ()=>{
+        colorSwatchRow.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+        sw.classList.add('active');
+        tagColorInput.value = sw.dataset.color;
+        currentTextColor = sw.dataset.text;
+        updatePreview();
+      });
+    });
+    function updatePreview(){
+      tagPreview.style.background = tagColorInput.value;
+      tagPreview.style.color = currentTextColor;
+      tagPreview.textContent = document.getElementById('tagLabel').value.trim() || 'Etiket';
+    }
+    document.getElementById('tagLabel').addEventListener('input', updatePreview);
+
+    function usageCount(key){
+      return GD.getAllProducts().filter(p => p.badge === key).length;
+    }
+
+    function renderTags(){
+      const tags = GD.getTags();
+      tagsTableBody.innerHTML = tags.map(t=>`
+        <tr>
+          <td><span class="product-badge" style="position:static;display:inline-block;background:${t.color};color:${t.textColor};">${GD.escapeHtml(t.label)}</span></td>
+          <td><code>${GD.escapeHtml(t.key)}</code></td>
+          <td>${GD.escapeHtml(t.label)}</td>
+          <td>${usageCount(t.key)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-sm" data-action="edit" data-key="${GD.escapeHtml(t.key)}">Düzenle</button>
+              <button class="btn-sm danger" data-action="delete" data-key="${GD.escapeHtml(t.key)}">Sil</button>
+            </div>
+          </td>
+        </tr>`).join('');
+
+      tagsTableBody.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+        btn.addEventListener('click', ()=> openEdit(btn.dataset.key));
+      });
+      tagsTableBody.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const key = btn.dataset.key;
+          const count = usageCount(key);
+          if(count > 0){
+            alert(`Bu etiket ${count} üründe kullanılıyor. Silmeden önce bu ürünlerin etiketini değiştirin.`);
+            return;
+          }
+          if(confirm('Bu etiketi silmek istediğinizden emin misiniz?')){
+            GD.saveTags(GD.getTags().filter(t => t.key !== key));
+            renderTags();
+          }
+        });
+      });
+    }
+
+    function selectColor(color){
+      const found = COLOR_CHOICES.find(c=>c.color.toLowerCase()===color.toLowerCase()) || COLOR_CHOICES[0];
+      tagColorInput.value = found.color;
+      currentTextColor = found.text;
+      colorSwatchRow.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('active', s.dataset.color===found.color));
+    }
+
+    function openAdd(){
+      editingKey = null;
+      document.getElementById('tagModalTitle').textContent = 'Etiket Ekle';
+      tagForm.reset();
+      document.getElementById('tagKey').disabled = false;
+      selectColor(COLOR_CHOICES[0].color);
+      updatePreview();
+      tagModal.classList.add('open');
+    }
+    function openEdit(key){
+      const tag = GD.getTags().find(t=>t.key===key);
+      if(!tag) return;
+      editingKey = key;
+      document.getElementById('tagModalTitle').textContent = 'Etiketi Düzenle';
+      document.getElementById('tagKey').value = tag.key;
+      document.getElementById('tagKey').disabled = true;
+      document.getElementById('tagLabel').value = tag.label;
+      selectColor(tag.color);
+      updatePreview();
+      tagModal.classList.add('open');
+    }
+    document.getElementById('addTagBtn').addEventListener('click', openAdd);
+    document.getElementById('tagModalClose').addEventListener('click', ()=> tagModal.classList.remove('open'));
+    tagModal.addEventListener('click', (e)=>{ if(e.target === tagModal) tagModal.classList.remove('open'); });
+
+    tagForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const key = document.getElementById('tagKey').value.trim().toLowerCase().replace(/\s+/g,'-');
+      const label = document.getElementById('tagLabel').value.trim();
+      document.getElementById('err-tagKey').textContent = '';
+      document.getElementById('err-tagLabel').textContent = '';
+      if(!key){ document.getElementById('err-tagKey').textContent = 'Anahtar gerekli.'; return; }
+      if(!label){ document.getElementById('err-tagLabel').textContent = 'Etiket adı gerekli.'; return; }
+
+      const tags = GD.getTags();
+      if(editingKey){
+        const tag = tags.find(t=>t.key===editingKey);
+        tag.label = label;
+        tag.color = tagColorInput.value;
+        tag.textColor = currentTextColor;
+      } else {
+        if(tags.some(t=>t.key===key)){ document.getElementById('err-tagKey').textContent = 'Bu anahtar zaten kullanılıyor.'; return; }
+        tags.push({ key, label, color: tagColorInput.value, textColor: currentTextColor });
+      }
+      GD.saveTags(tags);
+      tagModal.classList.remove('open');
+      renderTags();
+    });
+
+    renderTags();
+  }
+</script>
+</body>
+</html>

@@ -156,8 +156,10 @@
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
 <script>
   lucide.createIcons();
 
@@ -177,7 +179,7 @@
 
   function renderTabs(){
     catTabs.innerHTML = '';
-    GD.CATEGORIES.forEach(c=>{
+    GD.getCategories().forEach(c=>{
       const btn = document.createElement('button');
       btn.className = 'cat-tab' + (c.key === activeCat ? ' active' : '');
       btn.textContent = c.label;
@@ -188,7 +190,7 @@
 
   function updateHeading(){
     if(activeBadge){
-      const label = GD.BADGE_LABEL[activeBadge] || activeBadge;
+      const label = (GD.getTag(activeBadge) || {}).label || activeBadge;
       pageTitle.textContent = label;
       breadcrumbCurrent.textContent = label;
     } else if(activeCat !== 'all'){
@@ -206,7 +208,7 @@
   }
 
   function getFilteredList(){
-    let list = GD.PRODUCTS.slice();
+    let list = GD.getAllProducts();
     if(activeBadge) list = list.filter(p => p.badge === activeBadge);
     if(activeCat !== 'all') list = list.filter(p => p.cat === activeCat);
     if(searchQuery){
@@ -232,7 +234,7 @@
       <div class="product-card">
         <div class="product-media">
           <a href="product.html?id=${p.id}" aria-label="${GD.escapeHtml(p.name)}"></a>
-          <span class="product-badge ${p.badge}">${GD.BADGE_LABEL[p.badge]}</span>
+          ${GD.renderBadge(p.badge)}
           <div class="product-fav"><span data-lucide="heart"></span></div>
           ${GD.mediaImgTag(p.icon, p.grad, p.name, {size:400})}
         </div>

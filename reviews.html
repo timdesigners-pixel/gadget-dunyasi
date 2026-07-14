@@ -134,13 +134,15 @@
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
 <script>
   lucide.createIcons();
 
   const productSelect = document.getElementById('reviewProduct');
-  productSelect.innerHTML += GD.PRODUCTS.map(p=>`<option value="${p.id}">${GD.escapeHtml(p.name)}</option>`).join('');
+  productSelect.innerHTML += GD.getAllProducts().map(p=>`<option value="${p.id}">${GD.escapeHtml(p.name)}</option>`).join('');
 
   let activeStars = 0;
   const starButtons = Array.from(document.querySelectorAll('#starPicker button'));

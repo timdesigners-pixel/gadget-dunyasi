@@ -165,13 +165,14 @@
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
 <script>
   lucide.createIcons();
 
-  const FREE_SHIPPING_THRESHOLD = 150;
-  const SHIPPING_FEE = 49.90;
+  const { freeShippingThreshold: FREE_SHIPPING_THRESHOLD, shippingFee: SHIPPING_FEE } = GD.getSettings();
 
   const cartLines = document.getElementById('cartLines');
   const cartEmptyState = document.getElementById('cartEmptyState');

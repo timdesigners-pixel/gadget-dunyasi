@@ -26,27 +26,33 @@
   </div>
 </header>
 
-<div class="wrap" id="adminBody" style="padding-top:6px;padding-bottom:50px;"></div>
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="adminSidebar"></aside>
+  <main class="admin-content" id="adminContent"></main>
+</div>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/catalog.js"></script>
 <script src="assets/js/cart.js"></script>
 <script src="assets/js/orders.js"></script>
+<script src="assets/js/site-settings.js"></script>
+<script src="assets/js/admin-ui.js"></script>
 <script>
-  const adminSession = GD.getAdminSession();
-  if(!adminSession){
-    window.location.replace('admin-login.html');
-  } else {
+  const adminSession = GD.requireAdmin();
+  if(adminSession){
     lucide.createIcons();
-    document.getElementById('adminNameLabel').textContent = adminSession.name + ' · ' + adminSession.email;
+    GD.renderAdminSidebar('dashboard');
+    GD.renderAdminHeader(adminSession);
 
     const orders = GD.getOrders();
     const users = GD.getUsers();
+    const products = GD.getAllProducts();
     const totalRevenue = orders.reduce((s,o)=>s+o.total, 0);
 
-    const adminBody = document.getElementById('adminBody');
-    adminBody.innerHTML = `
-      <h1 class="page-title" style="margin-top:20px;">Genel Bakış</h1>
+    const adminContent = document.getElementById('adminContent');
+    adminContent.innerHTML = `
+      <h1 class="page-title" style="margin-top:0;">Genel Bakış</h1>
       <p class="page-sub">Bu panel yalnızca bu tarayıcının localStorage'ındaki demo verilerini gösterir; gerçek bir merkezi veritabanına bağlı değildir.</p>
 
       <div class="stat-grid">
@@ -64,12 +70,30 @@
         </div>
         <div class="stat-card">
           <div class="label">Ürün / Set Sayısı</div>
-          <div class="value">${GD.PRODUCTS.length + GD.SETS.length}</div>
+          <div class="value">${products.length + GD.SETS.length}</div>
         </div>
       </div>
 
       <div class="admin-section">
-        <h3>Son Siparişler</h3>
+        <h3>Hızlı Erişim</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="admin-orders.html" class="btn-sm"><span data-lucide="inbox" style="width:14px;height:14px;"></span> Siparişleri Yönet</a>
+          <a href="admin-products.html" class="btn-sm"><span data-lucide="package" style="width:14px;height:14px;"></span> Ürün Ekle / Düzenle</a>
+          <a href="admin-users.html" class="btn-sm"><span data-lucide="user" style="width:14px;height:14px;"></span> Kullanıcıları Yönet</a>
+          <a href="admin-categories.html" class="btn-sm"><span data-lucide="folder" style="width:14px;height:14px;"></span> Kategorileri Düzenle</a>
+          <a href="admin-tags.html" class="btn-sm"><span data-lucide="tag" style="width:14px;height:14px;"></span> Etiketleri Düzenle</a>
+          <a href="admin-shipping.html" class="btn-sm"><span data-lucide="truck" style="width:14px;height:14px;"></span> Kargo Entegrasyonu</a>
+          <a href="admin-payments.html" class="btn-sm"><span data-lucide="credit-card" style="width:14px;height:14px;"></span> Ödeme Yöntemleri</a>
+          <a href="admin-accounting.html" class="btn-sm"><span data-lucide="bar-chart" style="width:14px;height:14px;"></span> Muhasebe Raporları</a>
+          <a href="admin-settings.html" class="btn-sm"><span data-lucide="settings" style="width:14px;height:14px;"></span> Site Ayarları</a>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="margin:0;">Son Siparişler</h3>
+          <a href="admin-orders.html" class="btn-sm">Tümünü Gör</a>
+        </div>
         <div style="overflow-x:auto;">
           <table class="admin-table">
             <thead>
@@ -82,28 +106,19 @@
       </div>
 
       <div class="admin-section">
-        <h3>Kayıtlı Kullanıcılar</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="margin:0;">Son Kayıtlı Kullanıcılar</h3>
+          <a href="admin-users.html" class="btn-sm">Tümünü Gör</a>
+        </div>
         <div style="overflow-x:auto;">
           <table class="admin-table">
             <thead>
-              <tr><th>Ad Soyad</th><th>E-posta</th><th>Kayıt Yöntemi</th></tr>
+              <tr><th>Ad Soyad</th><th>E-posta</th><th>Kayıt Yöntemi</th><th>Durum</th></tr>
             </thead>
             <tbody id="usersTableBody"></tbody>
           </table>
         </div>
         <div class="admin-empty" id="usersEmpty" style="display:none;">Henüz kayıtlı kullanıcı yok.</div>
-      </div>
-
-      <div class="admin-section">
-        <h3>Ürün Kataloğu</h3>
-        <div style="overflow-x:auto;">
-          <table class="admin-table">
-            <thead>
-              <tr><th>Ürün</th><th>Kategori</th><th>Fiyat</th><th>Puan</th><th>Etiket</th></tr>
-            </thead>
-            <tbody id="productsTableBody"></tbody>
-          </table>
-        </div>
       </div>
     `;
 
@@ -111,7 +126,7 @@
     if(orders.length === 0){
       document.getElementById('ordersEmpty').style.display = 'block';
     } else {
-      ordersBody.innerHTML = orders.slice(0,20).map(o=>{
+      ordersBody.innerHTML = orders.slice(0,8).map(o=>{
         const dateStr = new Date(o.date).toLocaleDateString('tr-TR', { day:'numeric', month:'short', year:'numeric' });
         const itemsSummary = o.items.map(i=>`${i.qty}x ${GD.escapeHtml(i.name)}`).join(', ');
         return `<tr>
@@ -129,25 +144,13 @@
     if(users.length === 0){
       document.getElementById('usersEmpty').style.display = 'block';
     } else {
-      usersBody.innerHTML = users.map(u=>`<tr>
+      usersBody.innerHTML = users.slice(0,8).map(u=>`<tr>
         <td>${GD.escapeHtml(u.name)}</td>
         <td>${GD.escapeHtml(u.email)}</td>
         <td>${u.provider ? GD.escapeHtml(u.provider) : 'E-posta'}</td>
+        <td>${u.status === 'blocked' ? 'Engelli' : 'Aktif'}</td>
       </tr>`).join('');
     }
-
-    document.getElementById('productsTableBody').innerHTML = GD.PRODUCTS.map(p=>`<tr>
-      <td>${GD.escapeHtml(p.name)}</td>
-      <td>${GD.getCategoryLabel(p.cat)}</td>
-      <td>${GD.fmt(p.price)}</td>
-      <td>${p.rating} (${p.reviews})</td>
-      <td>${GD.BADGE_LABEL[p.badge] || '—'}</td>
-    </tr>`).join('');
-
-    document.getElementById('adminLogoutBtn').addEventListener('click', ()=>{
-      GD.logoutAdmin();
-      window.location.href = 'admin-login.html';
-    });
   }
 </script>
 </body>
